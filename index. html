@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Tugas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      font-size: 14px;
+    }
+    input[type="text"]:focus {
+      border-color: #28a745;
+    }
+    button.btn-add {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button.btn-add:hover {
+      background-color: #218838;
+    }
+    ul {
+      list-style: none;
+    }
+    li {
+      background: #f8f9fa;
+      padding: 10px 12px;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    li.completed span {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-delete:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Daftar Tugas</h2>
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Tambah tugas baru...">
+      <button class="btn-add" onclick="addTask()">Tambah</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    // Muat tugas tersimpan saat halaman dibuka
+    document.addEventListener('DOMContentLoaded', loadTasks);
+
+    // Tambah tugas saat tombol Enter ditekan
+    taskInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') addTask();
+    });
+
+    function addTask() {
+      const taskText = taskInput.value.trim();
+      if (taskText === '') return alert('Ketik tugasnya dulu ya!');
+
+      createTaskElement(taskText, false);
+      saveTasks();
+      taskInput.value = '';
+    }
+
+    function createTaskElement(text, completed) {
+      const li = document.createElement('li');
+      if (completed) li.classList.add('completed');
+
+      const span = document.createElement('span');
+      span.textContent = text;
+      span.onclick = () => {
+        li.classList.toggle('completed');
+        saveTasks();
+      };
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Hapus';
+      deleteBtn.className = 'btn-delete';
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        li.remove();
+        saveTasks();
+      };
+
+      li.appendChild(span);
+      li.appendChild(deleteBtn);
+      taskList.appendChild(li);
+    }
+
+    function saveTasks() {
+      const tasks = [];
+      document.querySelectorAll('#taskList li').forEach(li => {
+        tasks.push({
+          text: li.querySelector('span').textContent,
+          completed: li.classList.contains('completed')
+        });
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+      const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      savedTasks.forEach(task => createTaskElement(task.text, task.completed));
+    }
+  </script>
+
+</body>
+</html>
