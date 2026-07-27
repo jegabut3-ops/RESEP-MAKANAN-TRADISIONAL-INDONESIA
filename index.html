@@ -3,341 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow — Minimalist</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Resep Masakan Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --surface: #ffffff;
             --border: #e2e8f0;
-            --primary: #000000;
-            --primary-hover: #1e293b;
-            --accent-red: #ef4444;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --brand: #c2410c; /* Terracotta / Warm Earth */
+            --brand-light: #fff7ed;
             --radius: 12px;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #090d16;
-                --card-bg: #111827;
-                --text-main: #f8fafc;
+                --bg: #0b0f17;
+                --surface: #151c2c;
+                --border: #1e293b;
+                --text: #f8fafc;
                 --text-muted: #94a3b8;
-                --border: #1f2937;
-                --primary: #ffffff;
-                --primary-hover: #e2e8f0;
+                --brand: #ea580c;
+                --brand-light: #1c1917;
             }
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
             background-color: var(--bg);
-            color: var(--text-main);
+            color: var(--text);
             min-height: 100vh;
-            padding: 40px 16px;
+            padding: 24px 16px;
             display: flex;
             justify-content: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 520px;
-        }
+        .container { width: 100%; max-width: 800px; }
 
-        header {
-            margin-bottom: 24px;
-        }
+        header { margin-bottom: 24px; }
+        h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
 
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+        /* Search & Filter Controls */
+        .controls {
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;
         }
-
-        p.subtitle {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+        .search-input {
+            width: 100%; padding: 12px 16px; border-radius: var(--radius);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text); font-size: 0.95rem; outline: none;
         }
+        .search-input:focus { border-color: var(--brand); }
 
-        .input-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .input-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        input[type="text"], input[type="datetime-local"], select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-main);
-            font-size: 0.875rem;
-            outline: none;
-        }
-
-        input[type="text"]:focus, input[type="datetime-local"]:focus, select:focus {
-            border-color: var(--primary);
-        }
-
-        .btn-add {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: var(--primary);
-            color: var(--bg);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .btn-add:hover {
-            opacity: 0.9;
-        }
-
-        .filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
+        .filter-group { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
         .filter-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.8125rem;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 6px;
-            cursor: pointer;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+        }
+        .filter-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        /* Catalog Grid */
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden; cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        .card:hover { transform: translateY(-2px); border-color: var(--brand); }
+
+        .card-body { padding: 16px; }
+        .card-region { font-size: 0.75rem; font-weight: 700; color: var(--brand); text-transform: uppercase; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin: 4px 0 8px 0; }
+        .card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; }
+
+        /* Recipe Detail Modal View */
+        .detail-view { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+        .btn-back {
+            background: none; border: none; color: var(--brand); font-weight: 700;
+            font-size: 0.9rem; cursor: pointer; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px;
         }
 
-        .filter-btn.active {
-            color: var(--text-main);
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+        .portion-selector {
+            display: flex; align-items: center; gap: 12px; background: var(--brand-light);
+            padding: 10px 16px; border-radius: var(--radius); margin: 16px 0 24px 0; width: fit-content;
+        }
+        .portion-btn {
+            background: var(--surface); border: 1px solid var(--border); width: 28px; height: 28px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; color: var(--text);
         }
 
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+        
+        .ingredients-list { list-style: none; margin-bottom: 24px; }
+        .ingredients-list li { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 0.95rem; }
 
-        .task-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+        .steps-list { list-style: none; counter-reset: step-counter; }
+        .steps-list li {
+            position: relative; padding-left: 36px; margin-bottom: 16px;
+            font-size: 0.95rem; line-height: 1.5; cursor: pointer;
         }
-
-        .task-item.completed {
-            opacity: 0.5;
+        .steps-list li::before {
+            counter-increment: step-counter; content: counter(step-counter);
+            position: absolute; left: 0; top: 0; width: 24px; height: 24px;
+            background: var(--border); color: var(--text); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;
         }
-
-        .task-item.completed .task-text {
-            text-decoration: line-through;
-        }
-
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            overflow: hidden;
-        }
-
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .task-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .task-text {
-            font-size: 0.9375rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .task-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 4px;
-            line-height: 1;
-        }
-
-        .btn-delete:hover {
-            color: var(--accent-red);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 32px 0;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
+        .steps-list li.done { text-decoration: line-through; color: var(--text-muted); }
+        .steps-list li.done::before { background: var(--brand); color: #fff; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Daftar Tugas</h1>
-        <p class="subtitle" id="dateDisplay"></p>
+        <h1>Kuliner Nusantara</h1>
+        <p class="subtitle">Kumpulan resep otentik dari berbagai pelosok Indonesia</p>
     </header>
 
-    <div class="input-card">
-        <div class="input-row">
-            <input type="text" id="taskInput" placeholder="Tulis tugas baru..." onkeydown="if(event.key==='Enter') addTask()">
+    <!-- Main View -->
+    <div id="mainView">
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau bahan masakan..." oninput="renderRecipes()">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="setFilter('semua', this)">Semua Region</button>
+                <button class="filter-btn" onclick="setFilter('Sumatra', this)">Sumatra</button>
+                <button class="filter-btn" onclick="setFilter('Jawa', this)">Jawa</button>
+                <button class="filter-btn" onclick="setFilter('Bali', this)">Bali & NTT</button>
+                <button class="filter-btn" onclick="setFilter('Sulawesi', this)">Sulawesi</button>
+            </div>
         </div>
-        <div class="input-row">
-            <select id="categoryInput">
-                <option value="Umum">Umum</option>
-                <option value="Pekerjaan">Pekerjaan</option>
-                <option value="Pribadi">Pribadi</option>
-            </select>
-            <input type="datetime-local" id="dateInput">
-        </div>
-        <button class="btn-add" onclick="addTask()">Simpan Tugas</button>
+
+        <div class="recipe-grid" id="recipeGrid"></div>
     </div>
 
-    <div class="filters">
-        <button class="filter-btn active" onclick="setFilter('all', this)">Semua</button>
-        <button class="filter-btn" onclick="setFilter('active', this)">Belum Selesai</button>
-        <button class="filter-btn" onclick="setFilter('completed', this)">Selesai</button>
+    <!-- Detail View -->
+    <div id="detailView" class="detail-view">
+        <button class="btn-back" onclick="closeDetail()">← Kembali ke Daftar</button>
+        <div id="recipeDetail"></div>
     </div>
-
-    <div class="task-list" id="taskList"></div>
 </div>
 
 <script>
-    let tasks = JSON.parse(localStorage.getItem('clean_tasks')) || [];
-    let currentFilter = 'all';
+    const recipes = [
+        {
+            id: 'rendang',
+            name: 'Rendang Daging Sapi',
+            region: 'Sumatra',
+            time: '3-4 Jam',
+            difficulty: 'Sedang',
+            basePortion: 4,
+            ingredients: [
+                { name: 'Daging sapi (paha/gandik)', amount: 500, unit: 'g' },
+                { name: 'Santan kental (dari 2 butir kelapa)', amount: 1000, unit: 'ml' },
+                { name: 'Serai (memarkan)', amount: 2, unit: 'batang' },
+                { name: 'Daun jeruk', amount: 5, unit: 'lembar' },
+                { name: 'Daun kunyit (ikat simpul)', amount: 1, unit: 'lembar' },
+                { name: 'Bawang merah', amount: 10, unit: 'siung' },
+                { name: 'Bawang putih', amount: 5, unit: 'siung' },
+                { name: 'Cabai merah keriting', amount: 100, unit: 'g' },
+                { name: 'Lengkuas & Jahe', amount: 2, unit: 'cm' }
+            ],
+            steps: [
+                'Haluskan bawang merah, bawang putih, cabai keriting, lengkuas, dan jahe.',
+                'Ungkep daging sapi bersamanya bumbu halus hingga air daging keluar dan menyusut.',
+                'Tuang santan kental, masukkan serai, daun jeruk, dan daun kunyit.',
+                'Masak dengan api sedang cenderung kecil sambil terus diaduk perlahan agar santan tidak pecah.',
+                'Aduk terus hingga santan mengeluarkan minyak dan warna berubah menjadi cokelat gelap (rendang kering).'
+            ]
+        },
+        {
+            id: 'rawon',
+            name: 'Rawon Sapi khas Jawa Timur',
+            region: 'Jawa',
+            time: '1.5 Jam',
+            difficulty: 'Mudah',
+            basePortion: 4,
+            ingredients: [
+                { name: 'Daging sapi sandung lamur', amount: 500, unit: 'g' },
+                { name: 'Kluwek (ambil isinya, rendam air hangat)', amount: 4, unit: 'buah' },
+                { name: 'Bawang merah', amount: 8, unit: 'siung' },
+                { name: 'Bawang putih', amount: 4, unit: 'siung' },
+                { name: 'Daun jeruk', amount: 4, unit: 'lembar' },
+                { name: 'Serai', amount: 2, unit: 'batang' },
+                { name: 'Air bersih', amount: 1.5, unit: 'liter' }
+            ],
+            steps: [
+                'Rebus daging sapi dalam 1.5 liter air hingga empuk, lalu potong dadu. Simpan air kalas rebusannya.',
+                'Haluskan kluwek, bawang merah, bawang putih, kemiri, dan ketumbar.',
+                'Tumis bumbu halus bersama serai dan daun jeruk hingga harum.',
+                'Masukkan bumbu tumis ke dalam panci berisi air kaldu dan daging.',
+                'Masak hingga bumbu meresap sempurna. Sajikan bersama tauge pendek dan sambal terasi.'
+            ]
+        },
+        {
+            id: 'sate-lilit',
+            name: 'Sate Lilit Ayam Bali',
+            region: 'Bali',
+            time: '45 Menit',
+            difficulty: 'Mudah',
+            basePortion: 3,
+            ingredients: [
+                { name: 'Daging ayam giling', amount: 400, unit: 'g' },
+                { name: 'Kelapa parut agak muda', amount: 100, unit: 'g' },
+                { name: 'Batang serai (untuk tusukan)', amount: 10, unit: 'batang' },
+                { name: 'Santan kental', amount: 2, unit: 'sdm' },
+                { name: 'Bumbu halus (Basa Gede Bali)', amount: 3, unit: 'sdm' }
+            ],
+            steps: [
+                'Campurkan daging ayam giling, kelapa parut, santan, dan bumbu halus ke dalam satu wadah.',
+                'Aduk adonan hingga rata dan cukup kalis.',
+                'Ambil sedikit adonan, tempelkan dan lilitkan pada ujung batang serai.',
+                'Panggang sate di atas panggangan/teflon beroles sedikit minyak hingga matang kecokelatan.'
+            ]
+        },
+        {
+            id: 'ayam-woku',
+            name: 'Ayam Woku Belanga khas Manado',
+            region: 'Sulawesi',
+            time: '50 Menit',
+            difficulty: 'Sedang',
+            basePortion: 4,
+            ingredients: [
+                { name: 'Daging ayam (potong 10 bagian)', amount: 800, unit: 'g' },
+                { name: 'Daun kemangi', amount: 2, unit: 'ikat' },
+                { name: 'Daun pandan (iris halus)', amount: 1, unit: 'lembar' },
+                { name: 'Daun kunyit (iris halus)', amount: 1, unit: 'lembar' },
+                { name: 'Daun jeruk', amount: 6, unit: 'lembar' },
+                { name: 'Cabai rawit merah', amount: 15, unit: 'buah' },
+                { name: 'Bawang merah & putih', amount: 8, unit: 'siung' }
+            ],
+            steps: [
+                'Haluskan cabai, bawang merah, bawang putih, dan kunyit.',
+                'Tumis bumbu halus bersama daun pandan, daun kunyit, daun jeruk, dan serai hingga harum.',
+                'Masukkan potongan ayam, aduk hingga berubah warna.',
+                'Tuang sedikit air, tutup panci dan biarkan ayam matang dan kuah mengental.',
+                'Sesaat sebelum diangkat, masukkan daun kemangi dan perasan jeruk nipis. Aduk sebentar.'
+            ]
+        }
+    ];
 
-    // Format Tanggal Header
-    document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('id-ID', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
+    let activeFilter = 'semua';
+    let currentServings = 4;
+    let selectedRecipe = null;
 
-    function addTask() {
-        const input = document.getElementById('taskInput');
-        const text = input.value.trim();
-        const category = document.getElementById('categoryInput').value;
-        const date = document.getElementById('dateInput').value;
-
-        if (!text) return;
-
-        tasks.unshift({
-            id: Date.now(),
-            text: text,
-            category: category,
-            date: date,
-            completed: false
-        });
-
-        input.value = '';
-        document.getElementById('dateInput').value = '';
-        saveAndRender();
-    }
-
-    function toggleTask(id) {
-        tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-        saveAndRender();
-    }
-
-    function deleteTask(id) {
-        tasks = tasks.filter(t => t.id !== id);
-        saveAndRender();
-    }
-
-    function setFilter(filter, btn) {
-        currentFilter = filter;
+    function setFilter(region, btn) {
+        activeFilter = region;
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderTasks();
+        renderRecipes();
     }
 
-    function renderTasks() {
-        const list = document.getElementById('taskList');
-        list.innerHTML = '';
+    function renderRecipes() {
+        const grid = document.getElementById('recipeGrid');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        grid.innerHTML = '';
 
-        const filtered = tasks.filter(t => {
-            if (currentFilter === 'active') return !t.completed;
-            if (currentFilter === 'completed') return t.completed;
-            return true;
+        const filtered = recipes.filter(r => {
+            const matchesSearch = r.name.toLowerCase().includes(search) || 
+                                  r.ingredients.some(i => i.name.toLowerCase().includes(search));
+            const matchesRegion = activeFilter === 'semua' || r.region === activeFilter;
+            return matchesSearch && matchesRegion;
         });
 
         if (filtered.length === 0) {
-            list.innerHTML = `<div class="empty-state">Tidak ada tugas dalam daftar.</div>`;
+            grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Resep tidak ditemukan.</p>`;
             return;
         }
 
-        filtered.forEach(t => {
-            const item = document.createElement('div');
-            item.className = `task-item ${t.completed ? 'completed' : ''}`;
-            
-            let metaText = t.category;
-            if (t.date) {
-                const formattedDate = new Date(t.date).toLocaleString('id-ID', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-                metaText += ` • ${formattedDate}`;
-            }
-
-            item.innerHTML = `
-                <div class="task-left">
-                    <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTask(${t.id})">
-                    <div class="task-info">
-                        <span class="task-text">${t.text}</span>
-                        <span class="task-meta">${metaText}</span>
+        filtered.forEach(r => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openDetail(r.id);
+            card.innerHTML = `
+                <div class="card-body">
+                    <span class="card-region">${r.region}</span>
+                    <h3 class="card-title">${r.name}</h3>
+                    <div class="card-meta">
+                        <span>⏱️ ${r.time}</span>
+                        <span>📊 ${r.difficulty}</span>
                     </div>
                 </div>
-                <button class="btn-delete" onclick="deleteTask(${t.id})" title="Hapus">×</button>
             `;
-            list.appendChild(item);
+            grid.appendChild(card);
         });
     }
 
-    function saveAndRender() {
-        localStorage.setItem('clean_tasks', JSON.stringify(tasks));
-        renderTasks();
+    function openDetail(id) {
+        selectedRecipe = recipes.find(r => r.id === id);
+        currentServings = selectedRecipe.basePortion;
+        
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('detailView').style.display = 'block';
+        
+        renderDetailContent();
     }
 
-    renderTasks();
+    function closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        document.getElementById('mainView').style.display = 'block';
+        selectedRecipe = null;
+    }
+
+    function updateServings(delta) {
+        const newServings = currentServings + delta;
+        if (newServings >= 1 && newServings <= 10) {
+            currentServings = newServings;
+            renderDetailContent();
+        }
+    }
+
+    function renderDetailContent() {
+        if (!selectedRecipe) return;
+
+        const ratio = currentServings / selectedRecipe.basePortion;
+        const container = document.getElementById('recipeDetail');
+
+        const ingredientsHTML = selectedRecipe.ingredients.map(ing => {
+            const adjustedAmount = (ing.amount * ratio).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+            return `<li><strong>${adjustedAmount} ${ing.unit}</strong> ${ing.name}</li>`;
+        }).join('');
+
+        const stepsHTML = selectedRecipe.steps.map(step => {
+            return `<li onclick="this.classList.toggle('done')">${step}</li>`;
+        }).join('');
+
+        container.innerHTML = `
+            <span class="card-region">${selectedRecipe.region}</span>
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 4px;">${selectedRecipe.name}</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Estimasi Waktu: ${selectedRecipe.time} | Tingkat Kesulitan: ${selectedRecipe.difficulty}</p>
+
+            <div class="portion-selector">
+                <span style="font-size: 0.85rem; font-weight: 700;">Jumlah Porsi:</span>
+                <button class="portion-btn" onclick="updateServings(-1)">-</button>
+                <span style="font-weight: 800; min-width: 20px; text-align: center;">${currentServings}</span>
+                <button class="portion-btn" onclick="updateServings(1)">+</button>
+            </div>
+
+            <h3 class="section-title">Bahan-Bahan</h3>
+            <ul class="ingredients-list">${ingredientsHTML}</ul>
+
+            <h3 class="section-title">Langkah Memasak</h3>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 12px;">*Klik langkah untuk menandai selesai.</p>
+            <ol class="steps-list">${stepsHTML}</ol>
+        `;
+    }
+
+    renderRecipes();
 </script>
 </body>
 </html>
