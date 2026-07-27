@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resep Masakan Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --brand: #c2410c;
+            --brand-light: #fff7ed;
+            --radius: 12px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0b0f17;
+                --surface: #151c2c;
+                --border: #1e293b;
+                --text: #f8fafc;
+                --text-muted: #94a3b8;
+                --brand: #ea580c;
+                --brand-light: #1c1917;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container { width: 100%; max-width: 900px; }
+
+        header { margin-bottom: 24px; }
+        h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+        p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+
+        .controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        
+        .search-row { display: flex; gap: 10px; }
+        
+        .search-input, .select-input {
+            padding: 12px 16px; border-radius: var(--radius);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text); font-size: 0.95rem; outline: none;
+        }
+        .search-input { flex: 1; }
+        .search-input:focus, .select-input:focus { border-color: var(--brand); }
+
+        .counter-badge {
+            font-size: 0.85rem; font-weight: 700; color: var(--brand);
+            background: var(--brand-light); padding: 8px 12px; border-radius: 8px; width: fit-content;
+        }
+
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden; cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-2px); border-color: var(--brand); }
+
+        .card-img {
+            width: 100%; height: 170px; object-fit: cover; background-color: var(--border);
+        }
+
+        .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .card-region { font-size: 0.75rem; font-weight: 700; color: var(--brand); text-transform: uppercase; }
+        .card-title { font-size: 1.05rem; font-weight: 700; margin: 4px 0 8px 0; }
+        .card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; margin-top: auto; }
+
+        .detail-view { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+        .detail-img {
+            width: 100%; max-height: 340px; object-fit: cover; border-radius: var(--radius); margin: 12px 0;
+        }
+
+        .btn-back {
+            background: none; border: none; color: var(--brand); font-weight: 700;
+            font-size: 0.9rem; cursor: pointer; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 6px;
+        }
+
+        .portion-selector {
+            display: flex; align-items: center; gap: 12px; background: var(--brand-light);
+            padding: 10px 16px; border-radius: var(--radius); margin: 16px 0 24px 0; width: fit-content;
+        }
+        .portion-btn {
+            background: var(--surface); border: 1px solid var(--border); width: 28px; height: 28px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; color: var(--text);
+        }
+
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+        
+        .ingredients-list { list-style: none; margin-bottom: 24px; }
+        .ingredients-list li { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 0.95rem; }
+
+        .steps-list { list-style: none; counter-reset: step-counter; }
+        .steps-list li {
+            position: relative; padding-left: 36px; margin-bottom: 16px;
+            font-size: 0.95rem; line-height: 1.5; cursor: pointer;
+        }
+        .steps-list li::before {
+            counter-increment: step-counter; content: counter(step-counter);
+            position: absolute; left: 0; top: 0; width: 24px; height: 24px;
+            background: var(--border); color: var(--text); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;
+        }
+        .steps-list li.done { text-decoration: line-through; color: var(--text-muted); }
+        .steps-list li.done::before { background: var(--brand); color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Resep Kuliner Nusantara</h1>
+        <p class="subtitle">Katalog resep otentik lengkap dengan foto asli dari berbagai daerah</p>
+    </header>
+
+    <div id="mainView">
+        <div class="controls">
+            <div class="search-row">
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau daerah..." oninput="renderRecipes()">
+                <select id="regionSelect" class="select-input" onchange="renderRecipes()">
+                    <option value="semua">Semua Wilayah</option>
+                    <option value="Sumatera">Sumatera</option>
+                    <option value="Jawa">Jawa & Bali</option>
+                    <option value="Kalimantan">Kalimantan</option>
+                    <option value="Sulawesi">Sulawesi</option>
+                    <option value="Papua">Papua & Maluku</option>
+                </select>
+            </div>
+            <div class="counter-badge" id="counterBadge">Loading...</div>
+        </div>
+
+        <div class="recipe-grid" id="recipeGrid"></div>
+    </div>
+
+    <div id="detailView" class="detail-view">
+        <button class="btn-back" onclick="closeDetail()">← Kembali ke Daftar Menu</button>
+        <div id="recipeDetail"></div>
+    </div>
+</div>
+
+<script>
+    // Data Resep dengan Foto Asli Terverifikasi (Wikimedia Commons)
+    const recipes = [
+        {
+            id: 1,
+            name: "Rendang Daging Sapi",
+            region: "Sumatera (Sumbar)",
+            group: "Sumatera",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Rendang_daging_sapi_full.JPG/640px-Rendang_daging_sapi_full.JPG",
+            time: "3-4 Jam",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Daging sapi gandik", amount: 500, unit: "g" },
+                { name: "Santan kental kelapa tua", amount: 1000, unit: "ml" },
+                { name: "Serai memarkan", amount: 2, unit: "batang" },
+                { name: "Daun jeruk segar", amount: 5, unit: "lembar" },
+                { name: "Daun kunyit simpul", amount: 1, unit: "lembar" },
+                { name: "Bumbu halus (Bawang, Cabai, Lengkuas, Jahe)", amount: 150, unit: "g" }
+            ],
+            steps: [
+                "Ungkep daging sapi bersama bumbu halus hingga air daging menyusut.",
+                "Tuangkan santan kental, masukkan serai, daun jeruk, dan daun kunyit.",
+                "Masak dengan api sedang cenderung kecil sambil terus diaduk perlahan.",
+                "Aduk hingga santan berminyak dan warna berubah cokelat gelap menua."
+            ]
+        },
+        {
+            id: 2,
+            name: "Mie Aceh",
+            region: "Sumatera (Aceh)",
+            group: "Sumatera",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Mie_Aceh_Kepiting.JPG/640px-Mie_Aceh_Kepiting.JPG",
+            time: "30 Menit",
+            difficulty: "Mudah",
+            basePortion: 2,
+            ingredients: [
+                { name: "Mie kuning basah", amount: 300, unit: "g" },
+                { name: "Daging sapi / udang", amount: 150, unit: "g" },
+                { name: "Bumbu kari khas Aceh", amount: 3, unit: "sdm" },
+                { name: "Bawang merah & putih cincang", amount: 4, unit: "siung" },
+                { name: "Kuis / Air kaldu", amount: 200, unit: "ml" },
+                { name: "Emping & acar bawang", amount: 1, unit: "porsi" }
+            ],
+            steps: [
+                "Tumis bawang cincang dan bumbu rempah kari Aceh sampai harum.",
+                "Masukkan irisan daging/udang, aduk hingga berubah warna.",
+                "Tuangkan air kaldu, lalu masukkan mie kuning dan sayuran.",
+                "Masak hingga kuah mengental nyemek, sajikan dengan emping."
+            ]
+        },
+        {
+            id: 3,
+            name: "Pempek Palembang",
+            region: "Sumatera (Sumsel)",
+            group: "Sumatera",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Pempek_Kapal_Selam.jpg/640px-Pempek_Kapal_Selam.jpg",
+            time: "60 Menit",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Ikan tenggiri giling", amount: 400, unit: "g" },
+                { name: "Tepung sagu / tapioka", amount: 300, unit: "g" },
+                { name: "Air es", amount: 150, unit: "ml" },
+                { name: "Telor ayam (untuk isian kapal selam)", amount: 3, unit: "butir" },
+                { name: "Kuah Cuko (Gula merah, asam jawa, cabai, bawang putih)", amount: 300, unit: "ml" }
+            ],
+            steps: [
+                "Aduk rata ikan tenggiri giling dengan air es dan garam.",
+                "Campur tepung sagu sedikit demi sedikit hingga adonan bisa dibentuk.",
+                "Bentuk adonan menjadi kapal selam / lenjer, rebus dalam air mendidih sampai mengapung.",
+                "Goreng pempek hingga kecokelatan dan hidangkan bersama kuah cuko pedas manis."
+            ]
+        },
+        {
+            id: 4,
+            name: "Rawon Daging Sapi",
+            region: "Jawa (Jawa Timur)",
+            group: "Jawa",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Rawon_Setan.jpg/640px-Rawon_Setan.jpg",
+            time: "90 Menit",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Daging sapi sandung lamur", amount: 500, unit: "g" },
+                { name: "Kluwek (ambil isi, rendam air hangat)", amount: 5, unit: "buah" },
+                { name: "Bawang merah & putih", amount: 10, unit: "siung" },
+                { name: "Serai & daun jeruk", amount: 3, unit: "lembar" },
+                { name: "Tauge pendek & sambal terasi", amount: 1, unit: "porsi" }
+            ],
+            steps: [
+                "Rebus daging sapi sampai empuk, potong dadu kecil.",
+                "Haluskan kluwek bersama bawang dan rempah lainnya, lalu tumis hingga matang.",
+                "Masukkan tumisan bumbu ke dalam panci kuah rebusan daging.",
+                "Masak hingga meresap dan warna kuah jadi hitam pekat. Taburi tauge pendek."
+            ]
+        },
+        {
+            id: 5,
+            name: "Gudeg Jogja",
+            region: "Jawa (DIY)",
+            group: "Jawa",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Gudeg_Yogyakarta.jpg/640px-Gudeg_Yogyakarta.jpg",
+            time: "2-3 Jam",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Nangka muda (nangka tatal)", amount: 500, unit: "g" },
+                { name: "Gula merah / jawa murni", amount: 150, unit: "g" },
+                { name: "Santan encer & kental", amount: 800, unit: "ml" },
+                { name: "Daun jati (penyedia warna cokelat alami)", amount: 3, unit: "lembar" },
+                { name: "Bawang putih & ketumbar halus", amount: 1, unit: "sdm" }
+            ],
+            steps: [
+                "Alasi dasar panci dengan daun jati, tata nangka muda di atasnya.",
+                "Masukkan bumbu halus, gula merah, dan santan encer.",
+                "Rebus perlahan dengan api kecil sampai nangka lunak dan berwarna kecokelatan.",
+                "Tuangkan santan kental, masak sampai kuah menyusut dan mengering."
+            ]
+        },
+        {
+            id: 6,
+            name: "Ayam Betutu",
+            region: "Jawa (Bali)",
+            group: "Jawa",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Ayam_betutu.JPG/640px-Ayam_betutu.JPG",
+            time: "2 Jam",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Ayam utuh", amount: 1, unit: "ekor" },
+                { name: "Bumbu Basa Gede khas Bali", amount: 200, unit: "g" },
+                { name: "Daun pisang untuk membungkus", amount: 3, unit: "lembar" },
+                { name: "Minyak kelapa asli", amount: 3, unit: "sdm" }
+            ],
+            steps: [
+                "Balurkan bumbu basa gede secara merata ke seluruh permukaan dan dalam ayam.",
+                "Bungkus ayam rapat-rapat memakai daun pisang.",
+                "Kukus ayam selama 1 jam, lalu panggang hingga matang beraroma khas.",
+                "Sajikan bersama sambal matah dan kacang tanah goreng."
+            ]
+        },
+        {
+            id: 7,
+            name: "Soto Banjar",
+            region: "Kalimantan (Kalsel)",
+            group: "Kalimantan",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Soto_Banjar_limau.jpg/640px-Soto_Banjar_limau.jpg",
+            time: "60 Menit",
+            difficulty: "Mudah",
+            basePortion: 4,
+            ingredients: [
+                { name: "Ayam kampung", amount: 1/2, unit: "ekor" },
+                { name: "Rempah kayu manis, kapulaga, cengkeh", amount: 1, unit: "paket" },
+                { name: "Ketupat / Lontong", amount: 4, unit: "buah" },
+                { name: "Telor rebus & perkedel kentang", amount: 2, unit: "porsi" }
+            ],
+            steps: [
+                "Rebus ayam bersama rempah kapulaga, cengkeh, dan kayu manis hingga berkaldu bening.",
+                "Suwir-suwir daging ayam, sisihkan.",
+                "Tata irisan ketupat, suwiran ayam, dan perkedel di dalam mangkuk.",
+                "Siram dengan kuah soto panas beraroma wangi rempah."
+            ]
+        },
+        {
+            id: 8,
+            name: "Coto Makassar",
+            region: "Sulawesi (Sulsel)",
+            group: "Sulawesi",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Coto_makassar.jpg/640px-Coto_makassar.jpg",
+            time: "90 Menit",
+            difficulty: "Sedang",
+            basePortion: 4,
+            ingredients: [
+                { name: "Daging sapi & jeroan", amount: 500, unit: "g" },
+                { name: "Kacang tanah sangrai giling halus", amount: 100, unit: "g" },
+                { name: "Air cucian beras (tajin)", amount: 1, unit: "liter" },
+                { name: "Bumbu rempah Coto lengkap", amount: 150, unit: "g" },
+                { name: "Ketupat daun kelapa", amount: 4, unit: "buah" }
+            ],
+            steps: [
+                "Rebus daging dan jeroan dalam air cucian beras hingga empuk, lalu potong-potong.",
+                "Tumis bumbu halus, masukkan ke dalam air rebusan kaldu.",
+                "Tambahkan kacang tanah sangrai giling agar kuah menjadi gurih kental.",
+                "Hidangkan di mangkuk bersama irisan ketupat dan daun bawang."
+            ]
+        },
+        {
+            id: 9,
+            name: "Papeda & Ikan Kuah Kuning",
+            region: "Papua (Papua / Maluku)",
+            group: "Papua",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Papeda%2C_Ikan_Kuah_Kuning%2C_Sayur_Geno_Maki.jpg/640px-Papeda%2C_Ikan_Kuah_Kuning%2C_Sayur_Geno_Maki.jpg",
+            time: "40 Menit",
+            difficulty: "Mudah",
+            basePortion: 3,
+            ingredients: [
+                { name: "Tepung sagu murni", amount: 200, unit: "g" },
+                { name: "Ikan tongkol / kakap segar", amount: 400, unit: "g" },
+                { name: "Kunyit, kemiri, bawang merah, cabai", amount: 100, unit: "g" },
+                { name: "Daun kemangi & jeruk nipis", amount: 1, unit: "ikat" }
+            ],
+            steps: [
+                "Seduh tepung sagu dengan air panas mendidih sambil diaduk cepat hingga menjadi gel bening (Papeda).",
+                "Tumis bumbu kunyit halus, tuangkan air hingga mendidih.",
+                "Masukkan potongan ikan segar, garam, dan perasan jeruk nipis.",
+                "Masak sampai ikan matang, beri daun kemangi, lalu sajikan bersama papeda."
+            ]
+        }
+    ];
+
+    let currentServings = 4;
+    let selectedRecipe = null;
+
+    function renderRecipes() {
+        const grid = document.getElementById('recipeGrid');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const selectedGroup = document.getElementById('regionSelect').value;
+        grid.innerHTML = '';
+
+        const filtered = recipes.filter(r => {
+            const matchesSearch = r.name.toLowerCase().includes(search) || r.region.toLowerCase().includes(search);
+            const matchesGroup = selectedGroup === 'semua' || r.group === selectedGroup;
+            return matchesSearch && matchesGroup;
+        });
+
+        document.getElementById('counterBadge').innerText = `Menampilkan ${filtered.length} Resep Terverifikasi`;
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 32px 0;">Menu tidak ditemukan.</p>`;
+            return;
+        }
+
+        filtered.forEach(r => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openDetail(r.id);
+            card.innerHTML = `
+                <img class="card-img" src="${r.image}" alt="${r.name}" loading="lazy">
+                <div class="card-body">
+                    <span class="card-region">${r.region}</span>
+                    <h3 class="card-title">${r.name}</h3>
+                    <div class="card-meta">
+                        <span>⏱️ ${r.time}</span>
+                        <span>📊 ${r.difficulty}</span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function openDetail(id) {
+        selectedRecipe = recipes.find(r => r.id === id);
+        currentServings = selectedRecipe.basePortion;
+        
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('detailView').style.display = 'block';
+        
+        renderDetailContent();
+    }
+
+    function closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        document.getElementById('mainView').style.display = 'block';
+        selectedRecipe = null;
+    }
+
+    function updateServings(delta) {
+        const newServings = currentServings + delta;
+        if (newServings >= 1 && newServings <= 10) {
+            currentServings = newServings;
+            renderDetailContent();
+        }
+    }
+
+    function renderDetailContent() {
+        if (!selectedRecipe) return;
+
+        const ratio = currentServings / selectedRecipe.basePortion;
+        const container = document.getElementById('recipeDetail');
+
+        const ingredientsHTML = selectedRecipe.ingredients.map(ing => {
+            const adjustedAmount = (ing.amount * ratio).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+            return `<li><strong>${adjustedAmount} ${ing.unit}</strong> ${ing.name}</li>`;
+        }).join('');
+
+        const stepsHTML = selectedRecipe.steps.map(step => {
+            return `<li onclick="this.classList.toggle('done')">${step}</li>`;
+        }).join('');
+
+        container.innerHTML = `
+            <span class="card-region">${selectedRecipe.region}</span>
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 4px;">${selectedRecipe.name}</h2>
+            
+            <img class="detail-img" src="${selectedRecipe.image}" alt="${selectedRecipe.name}">
+
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Estimasi Waktu: ${selectedRecipe.time} | Tingkat Kesulitan: ${selectedRecipe.difficulty}</p>
+
+            <div class="portion-selector">
+                <span style="font-size: 0.85rem; font-weight: 700;">Takaran Porsi:</span>
+                <button class="portion-btn" onclick="updateServings(-1)">-</button>
+                <span style="font-weight: 800; min-width: 20px; text-align: center;">${currentServings}</span>
+                <button class="portion-btn" onclick="updateServings(1)">+</button>
+            </div>
+
+            <h3 class="section-title">Bahan-Bahan Resep</h3>
+            <ul class="ingredients-list">${ingredientsHTML}</ul>
+
+            <h3 class="section-title">Langkah Memasak</h3>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 12px;">*Klik langkah untuk menandai selesai.</p>
+            <ol class="steps-list">${stepsHTML}</ol>
+        `;
+    }
+
+    renderRecipes();
+</script>
+</body>
+</html>
