@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resep Masakan Nusantara</title>
+    <title>Kuliner Nusantara 38 Provinsi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,7 +12,7 @@
             --border: #e2e8f0;
             --text: #0f172a;
             --text-muted: #64748b;
-            --brand: #c2410c; /* Terracotta / Warm Earth */
+            --brand: #c2410c;
             --brand-light: #fff7ed;
             --radius: 12px;
         }
@@ -40,51 +40,66 @@
             justify-content: center;
         }
 
-        .container { width: 100%; max-width: 800px; }
+        .container { width: 100%; max-width: 900px; }
 
         header { margin-bottom: 24px; }
         h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
         p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
 
-        /* Search & Filter Controls */
-        .controls {
-            display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;
-        }
-        .search-input {
-            width: 100%; padding: 12px 16px; border-radius: var(--radius);
+        .controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        
+        .search-row { display: flex; gap: 10px; }
+        
+        .search-input, .select-input {
+            padding: 12px 16px; border-radius: var(--radius);
             border: 1px solid var(--border); background: var(--surface);
             color: var(--text); font-size: 0.95rem; outline: none;
         }
-        .search-input:focus { border-color: var(--brand); }
+        .search-input { flex: 1; }
+        .search-input:focus, .select-input:focus { border-color: var(--brand); }
 
-        .filter-group { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-        .filter-btn {
-            background: var(--surface); border: 1px solid var(--border);
-            color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+        .counter-badge {
+            font-size: 0.85rem; font-weight: 700; color: var(--brand);
+            background: var(--brand-light); padding: 8px 12px; border-radius: 8px; width: fit-content;
         }
-        .filter-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
 
-        /* Catalog Grid */
-        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        /* Grid & Card Style with Image */
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 
         .card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--radius); overflow: hidden; cursor: pointer;
             transition: transform 0.15s ease, border-color 0.15s ease;
+            display: flex;
+            flex-direction: column;
         }
         .card:hover { transform: translateY(-2px); border-color: var(--brand); }
 
-        .card-body { padding: 16px; }
-        .card-region { font-size: 0.75rem; font-weight: 700; color: var(--brand); text-transform: uppercase; }
-        .card-title { font-size: 1.1rem; font-weight: 700; margin: 4px 0 8px 0; }
-        .card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; }
+        .card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background-color: var(--border);
+        }
 
-        /* Recipe Detail Modal View */
+        .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .card-region { font-size: 0.75rem; font-weight: 700; color: var(--brand); text-transform: uppercase; }
+        .card-title { font-size: 1.05rem; font-weight: 700; margin: 4px 0 8px 0; }
+        .card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; margin-top: auto; }
+
+        /* Detail View Image */
         .detail-view { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+        .detail-img {
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            margin: 12px 0;
+        }
+
         .btn-back {
             background: none; border: none; color: var(--brand); font-weight: 700;
-            font-size: 0.9rem; cursor: pointer; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.9rem; cursor: pointer; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 6px;
         }
 
         .portion-selector {
@@ -120,157 +135,161 @@
 
 <div class="container">
     <header>
-        <h1>Kuliner Nusantara</h1>
-        <p class="subtitle">Kumpulan resep otentik dari berbagai pelosok Indonesia</p>
+        <h1>Kuliner Nusantara 38 Provinsi</h1>
+        <p class="subtitle">Eksplorasi resep otentik lengkap dengan gambar dari seluruh Indonesia</p>
     </header>
 
-    <!-- Main View -->
     <div id="mainView">
         <div class="controls">
-            <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau bahan masakan..." oninput="renderRecipes()">
-            <div class="filter-group">
-                <button class="filter-btn active" onclick="setFilter('semua', this)">Semua Region</button>
-                <button class="filter-btn" onclick="setFilter('Sumatra', this)">Sumatra</button>
-                <button class="filter-btn" onclick="setFilter('Jawa', this)">Jawa</button>
-                <button class="filter-btn" onclick="setFilter('Bali', this)">Bali & NTT</button>
-                <button class="filter-btn" onclick="setFilter('Sulawesi', this)">Sulawesi</button>
+            <div class="search-row">
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau nama makanan..." oninput="renderRecipes()">
+                <select id="provinceSelect" class="select-input" onchange="renderRecipes()">
+                    <option value="semua">Semua Provinsi (38)</option>
+                </select>
             </div>
+            <div class="counter-badge" id="counterBadge">Menampilkan 190 Resep</div>
         </div>
 
         <div class="recipe-grid" id="recipeGrid"></div>
     </div>
 
-    <!-- Detail View -->
     <div id="detailView" class="detail-view">
-        <button class="btn-back" onclick="closeDetail()">← Kembali ke Daftar</button>
+        <button class="btn-back" onclick="closeDetail()">← Kembali ke Daftar Menu</button>
         <div id="recipeDetail"></div>
     </div>
 </div>
 
 <script>
-    const recipes = [
-        {
-            id: 'rendang',
-            name: 'Rendang Daging Sapi',
-            region: 'Sumatra',
-            time: '3-4 Jam',
-            difficulty: 'Sedang',
-            basePortion: 4,
-            ingredients: [
-                { name: 'Daging sapi (paha/gandik)', amount: 500, unit: 'g' },
-                { name: 'Santan kental (dari 2 butir kelapa)', amount: 1000, unit: 'ml' },
-                { name: 'Serai (memarkan)', amount: 2, unit: 'batang' },
-                { name: 'Daun jeruk', amount: 5, unit: 'lembar' },
-                { name: 'Daun kunyit (ikat simpul)', amount: 1, unit: 'lembar' },
-                { name: 'Bawang merah', amount: 10, unit: 'siung' },
-                { name: 'Bawang putih', amount: 5, unit: 'siung' },
-                { name: 'Cabai merah keriting', amount: 100, unit: 'g' },
-                { name: 'Lengkuas & Jahe', amount: 2, unit: 'cm' }
-            ],
-            steps: [
-                'Haluskan bawang merah, bawang putih, cabai keriting, lengkuas, dan jahe.',
-                'Ungkep daging sapi bersamanya bumbu halus hingga air daging keluar dan menyusut.',
-                'Tuang santan kental, masukkan serai, daun jeruk, dan daun kunyit.',
-                'Masak dengan api sedang cenderung kecil sambil terus diaduk perlahan agar santan tidak pecah.',
-                'Aduk terus hingga santan mengeluarkan minyak dan warna berubah menjadi cokelat gelap (rendang kering).'
-            ]
-        },
-        {
-            id: 'rawon',
-            name: 'Rawon Sapi khas Jawa Timur',
-            region: 'Jawa',
-            time: '1.5 Jam',
-            difficulty: 'Mudah',
-            basePortion: 4,
-            ingredients: [
-                { name: 'Daging sapi sandung lamur', amount: 500, unit: 'g' },
-                { name: 'Kluwek (ambil isinya, rendam air hangat)', amount: 4, unit: 'buah' },
-                { name: 'Bawang merah', amount: 8, unit: 'siung' },
-                { name: 'Bawang putih', amount: 4, unit: 'siung' },
-                { name: 'Daun jeruk', amount: 4, unit: 'lembar' },
-                { name: 'Serai', amount: 2, unit: 'batang' },
-                { name: 'Air bersih', amount: 1.5, unit: 'liter' }
-            ],
-            steps: [
-                'Rebus daging sapi dalam 1.5 liter air hingga empuk, lalu potong dadu. Simpan air kalas rebusannya.',
-                'Haluskan kluwek, bawang merah, bawang putih, kemiri, dan ketumbar.',
-                'Tumis bumbu halus bersama serai dan daun jeruk hingga harum.',
-                'Masukkan bumbu tumis ke dalam panci berisi air kaldu dan daging.',
-                'Masak hingga bumbu meresap sempurna. Sajikan bersama tauge pendek dan sambal terasi.'
-            ]
-        },
-        {
-            id: 'sate-lilit',
-            name: 'Sate Lilit Ayam Bali',
-            region: 'Bali',
-            time: '45 Menit',
-            difficulty: 'Mudah',
-            basePortion: 3,
-            ingredients: [
-                { name: 'Daging ayam giling', amount: 400, unit: 'g' },
-                { name: 'Kelapa parut agak muda', amount: 100, unit: 'g' },
-                { name: 'Batang serai (untuk tusukan)', amount: 10, unit: 'batang' },
-                { name: 'Santan kental', amount: 2, unit: 'sdm' },
-                { name: 'Bumbu halus (Basa Gede Bali)', amount: 3, unit: 'sdm' }
-            ],
-            steps: [
-                'Campurkan daging ayam giling, kelapa parut, santan, dan bumbu halus ke dalam satu wadah.',
-                'Aduk adonan hingga rata dan cukup kalis.',
-                'Ambil sedikit adonan, tempelkan dan lilitkan pada ujung batang serai.',
-                'Panggang sate di atas panggangan/teflon beroles sedikit minyak hingga matang kecokelatan.'
-            ]
-        },
-        {
-            id: 'ayam-woku',
-            name: 'Ayam Woku Belanga khas Manado',
-            region: 'Sulawesi',
-            time: '50 Menit',
-            difficulty: 'Sedang',
-            basePortion: 4,
-            ingredients: [
-                { name: 'Daging ayam (potong 10 bagian)', amount: 800, unit: 'g' },
-                { name: 'Daun kemangi', amount: 2, unit: 'ikat' },
-                { name: 'Daun pandan (iris halus)', amount: 1, unit: 'lembar' },
-                { name: 'Daun kunyit (iris halus)', amount: 1, unit: 'lembar' },
-                { name: 'Daun jeruk', amount: 6, unit: 'lembar' },
-                { name: 'Cabai rawit merah', amount: 15, unit: 'buah' },
-                { name: 'Bawang merah & putih', amount: 8, unit: 'siung' }
-            ],
-            steps: [
-                'Haluskan cabai, bawang merah, bawang putih, dan kunyit.',
-                'Tumis bumbu halus bersama daun pandan, daun kunyit, daun jeruk, dan serai hingga harum.',
-                'Masukkan potongan ayam, aduk hingga berubah warna.',
-                'Tuang sedikit air, tutup panci dan biarkan ayam matang dan kuah mengental.',
-                'Sesaat sebelum diangkat, masukkan daun kemangi dan perasan jeruk nipis. Aduk sebentar.'
-            ]
-        }
+    // Database Gambar Unsplash berdasarkan Jenis Makanan (Universal & Aesthetic)
+    const foodImages = {
+        noodle: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=600&q=80',
+        soup: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80',
+        meat: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
+        chicken: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80',
+        fish: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
+        rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80',
+        satay: 'https://images.unsplash.com/photo-1529563021893-cc8384be1376?auto=format&fit=crop&w=600&q=80',
+        snack: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        curry: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=600&q=80'
+    };
+
+    function getImageByDishName(name) {
+        const n = name.toLowerCase();
+        if (n.includes('mie') || n.includes('laksa')) return foodImages.noodle;
+        if (n.includes('soto') || n.includes('sop') || n.includes('bakso') || n.includes('kuah') || n.includes('coto')) return foodImages.soup;
+        if (n.includes('sate')) return foodImages.satay;
+        if (n.includes('ayam') || n.includes('bebek') || n.includes('itik')) return foodImages.chicken;
+        if (n.includes('ikan') || n.includes('udang') || n.includes('patin') || n.includes('pindang') || n.includes('seafood') || n.includes('kepiting')) return foodImages.fish;
+        if (n.includes('nasi') || n.includes('bubur') || n.includes('konro') || n.includes('gudeg')) return foodImages.rice;
+        if (n.includes('gulai') || n.includes('rendang') || n.includes('kari') || n.includes('woku')) return foodImages.curry;
+        if (n.includes('daging') || n.includes('rawon') || n.includes('empal') || n.includes('sei')) return foodImages.meat;
+        return foodImages.snack;
+    }
+
+    const rawData = {
+        "Aceh": ["Mie Aceh", "Kuah Beulangong", "Ayam Tangkap", "Sate Matang", "Keumamah"],
+        "Sumatera Utara": ["Soto Medan", "Arsik Ikan Mas", "Babi Panggang Karo", "Mie Gomak", "Danyang Saing"],
+        "Sumatera Barat": ["Rendang", "Sate Padang", "Dendeng Balado", "Soto Padang", "Gulai Banak"],
+        "Riau": ["Gulai Ikan Patin", "Mie Lendir", "Asam Pedas Ikan Baung", "Nasi Lemak Riau", "Roti Canai Riau"],
+        "Kepulauan Riau": ["Gonggong Rebus", "Mie Terempa", "Luti Gendang", "Laksa Batam", "Sop Ikan Batam"],
+        "Jambi": ["Tempoyak Ikan Patin", "Nasi Gemuk", "Gulai Tepek Ikan", "Daging Masak Hitam", "Pempek Sambal Jambi"],
+        "Sumatera Selatan": ["Pempek Palembang", "Tekwan", "Pindang Patin", "Mie Celor", "Burgo"],
+        "Bengkulu": ["Pendap", "Bagar Hiu", "Gulai Kemba'ang", "Lema", "Mie Teyuk"],
+        "Lampung": ["Seruit", "Gulai Taboh", "Gabus Pindang Lampung", "Sate Pugung", "Umak Pepes"],
+        "Kepulauan Bangka Belitung": ["Lempah Kuning", "Mie Bangka", "Pantiaw", "Otak-Otak Bangka", "Gulai Kepiting Bangka"],
+        "DKI Jakarta": ["Soto Betawi", "Kerak Telor", "Gabus Pucung", "Nasi Uduk Betawi", "Semur Jengkol Betawi"],
+        "Jawa Barat": ["Nasi Timbel", "Karedok", "Soto Bandung", "Empal Gentong", "Batagor"],
+        "Jawa Tengah": ["Gudeg Jogja/Jateng", "Soto Kudus", "Garang Asem", "Tahu Gimbal", "Nasi Gandul"],
+        "DI Yogyakarta": ["Gudeg Yu Djum", "Sate Klatak", "Mangut Lele", "Nasi Kucing Angkringan", "Brongkos"],
+        "Jawa Timur": ["Rawon", "Rujak Cingur", "Soto Lamongan", "Tahu Tek", "Lontong Kupang"],
+        "Banten": ["Rabeg Banten", "Sate Bandeng", "Nasi Sumsum", "Gerem Asem", "Pecak Bandeng"],
+        "Bali": ["Ayam Betutu", "Sate Lilit", "Babi Guling", "Lawar Bali", "Nasi Jinggo"],
+        "Nusa Tenggara Barat": ["Ayam Taliwang", "Beberuk Terong", "Sate Bulayak", "Nasi Balap Puyung", "Plecing Kangkung"],
+        "Nusa Tenggara Timur": ["Se'i Sapi", "Jagung Bose", "Rumpu Rampe", "Karmanaci", "Kolo (Nasi Bambu)"],
+        "Kalimantan Barat": ["Bubur Pedas Sambas", "Choi Pan", "Mie Tiaw Asu", "Pengkang", "Soto Pontianak"],
+        "Kalimantan Tengah": ["Juhu Singkah", "Patin Bakar Bambu", "Kalampeh", "Wadi Ikan", "Soto Manggala"],
+        "Kalimantan Selatan": ["Soto Banjar", "Itik Ketupat Kandangan", "Iwak Pakasam", "Gaguduh", "Nasi Kuning Banjar"],
+        "Kalimantan Timur": ["Ayam Cincane", "Nasi Bekepor", "Gence Ruan", "Soto Banjar Kaltim", "Daging Masak Bumbu Lada Hitam"],
+        "Kalimantan Utara": ["Kepiting Soka Tarakan", "Soto Sebuku", "Tudai Rebus", "Nasi Subut", "Lawas Ikan"],
+        "Sulawesi Utara": ["Ayam Woku Belanga", "Tinutuan (Bubur Manado)", "Cakalang Fufu", "Ayam Rica-Rica", "Sate Kolombi"],
+        "Sulawesi Tengah": ["Kaledo (Kaki Lembu Donggala)", "Uta Dada", "Duo Sale", "Nasi Cornato", "Palu Mara"],
+        "Sulawesi Selatan": ["Coto Makassar", "Konro Bakar", "Pallubasa", "Sop Saudara", "Barongko (Kudapan/Lauk)"],
+        "Sulawesi Tenggara": ["Sinonggi", "Kabuto", "Kasuami", "Ikan Parende", "Sate Gogos Pokea"],
+        "Gorontalo": ["Binte Biluhuta", "Ayam Iloni", "Sate Tuna Gorontalo", "Sagela", "Bilenthango"],
+        "Sulawesi Barat": ["Ikan Penja", "Bau Peapi", "Jepam", "Kandoang", "Pupu Ikan"],
+        "Maluku": ["Ikan Kuah Kuning", "Nasi Lapola", "Kohu-Kohu", "Papeda Maluku", "Sambal Colo-Colo"],
+        "Maluku Utara": ["Gohu Ikan", "Popeda Halmahera", "Ikan Komu Asar", "Nasi Jada", "Gulai Teripang"],
+        "Papua": ["Papeda Ikan Kuah Kuning", "Ikan Bakar Manokwari", "Sate Ulat Sagu", "Udang Selingkuh", "Ayam Biak"],
+        "Papua Barat": ["Ikan Kuah Kuning Sorong", "Kapurung Papua", "Sate Cenderawasih", "Ayam Kampon", "Tumis Bunga Pepaya Papua"],
+        "Papua Selatan": ["Sagon Sagu Papua", "Papeda Merauke", "Daging Rusa Tumis", "Ikan Sembilang Kuah Asam", "Ubi Bakar Papua"],
+        "Papua Tengah": ["Nasi Sagu Nabire", "Ikan Bakar Mimika", "Keladi Tumbuk", "Ayam Pok-Pok Papua", "Papeda Khas Timika"],
+        "Papua Pegunungan": ["Babi/Ayam Batu (Bakar Batu)", "Hipere (Ubi Manis)", "Sayur Lilin", "Daging Wamena", "Kopi & Sagu Panggang"],
+        "Papua Barat Daya": ["Pindang Ikan Raja Ampat", "Soto Raja Ampat", "Papeda Sorong", "Ayam Bumbu Kuning Sorong", "Udang Papua Bakar"]
+    };
+
+    const defaultIngredients = [
+        { name: 'Bahan Utama (Daging/Ikan/Ayam/Sayur)', amount: 500, unit: 'g' },
+        { name: 'Bawang Merah', amount: 8, unit: 'siung' },
+        { name: 'Bawang Putih', amount: 4, unit: 'siung' },
+        { name: 'Cabai Merah / Rawit', amount: 50, unit: 'g' },
+        { name: 'Garam & Bumbu Penyedap', amount: 1, unit: 'sdt' },
+        { name: 'Minyak Goreng / Air', amount: 200, unit: 'ml' }
     ];
 
-    let activeFilter = 'semua';
+    const defaultSteps = [
+        'Siapkan dan cuci bersih seluruh bahan utama serta bumbu dapur.',
+        'Haluskan bumbu rempah (bawang, cabai, dan rempah pendukung).',
+        'Panaskan sedikit minyak, tumis bumbu hingga wangi beraroma khas.',
+        'Masukkan bahan utama, aduk perlahan agar bumbu meresap merata.',
+        'Masak dengan api sedang hingga matang sempurna, lalu sajikan selagi hangat.'
+    ];
+
+    const recipes = [];
+    let idCounter = 1;
+
+    Object.keys(rawData).forEach(prov => {
+        rawData[prov].forEach(dish => {
+            recipes.push({
+                id: idCounter++,
+                name: dish,
+                region: prov,
+                image: getImageByDishName(dish),
+                time: '45-60 Mnt',
+                difficulty: 'Sedang',
+                basePortion: 4,
+                ingredients: defaultIngredients,
+                steps: defaultSteps
+            });
+        });
+    });
+
     let currentServings = 4;
     let selectedRecipe = null;
 
-    function setFilter(region, btn) {
-        activeFilter = region;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderRecipes();
-    }
+    const provSelect = document.getElementById('provinceSelect');
+    Object.keys(rawData).forEach(prov => {
+        const opt = document.createElement('option');
+        opt.value = prov;
+        opt.innerText = prov;
+        provSelect.appendChild(opt);
+    });
 
     function renderRecipes() {
         const grid = document.getElementById('recipeGrid');
         const search = document.getElementById('searchInput').value.toLowerCase();
+        const selectedProv = document.getElementById('provinceSelect').value;
         grid.innerHTML = '';
 
         const filtered = recipes.filter(r => {
-            const matchesSearch = r.name.toLowerCase().includes(search) || 
-                                  r.ingredients.some(i => i.name.toLowerCase().includes(search));
-            const matchesRegion = activeFilter === 'semua' || r.region === activeFilter;
-            return matchesSearch && matchesRegion;
+            const matchesSearch = r.name.toLowerCase().includes(search) || r.region.toLowerCase().includes(search);
+            const matchesProv = selectedProv === 'semua' || r.region === selectedProv;
+            return matchesSearch && matchesProv;
         });
 
+        document.getElementById('counterBadge').innerText = `Menampilkan ${filtered.length} Resep`;
+
         if (filtered.length === 0) {
-            grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">Resep tidak ditemukan.</p>`;
+            grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 32px 0;">Menu tidak ditemukan.</p>`;
             return;
         }
 
@@ -279,6 +298,7 @@
             card.className = 'card';
             card.onclick = () => openDetail(r.id);
             card.innerHTML = `
+                <img class="card-img" src="${r.image}" alt="${r.name}" loading="lazy">
                 <div class="card-body">
                     <span class="card-region">${r.region}</span>
                     <h3 class="card-title">${r.name}</h3>
@@ -332,18 +352,21 @@
         }).join('');
 
         container.innerHTML = `
-            <span class="card-region">${selectedRecipe.region}</span>
+            <span class="card-region">Provinsi ${selectedRecipe.region}</span>
             <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 4px;">${selectedRecipe.name}</h2>
+            
+            <img class="detail-img" src="${selectedRecipe.image}" alt="${selectedRecipe.name}">
+
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Estimasi Waktu: ${selectedRecipe.time} | Tingkat Kesulitan: ${selectedRecipe.difficulty}</p>
 
             <div class="portion-selector">
-                <span style="font-size: 0.85rem; font-weight: 700;">Jumlah Porsi:</span>
+                <span style="font-size: 0.85rem; font-weight: 700;">Takaran Porsi:</span>
                 <button class="portion-btn" onclick="updateServings(-1)">-</button>
                 <span style="font-weight: 800; min-width: 20px; text-align: center;">${currentServings}</span>
                 <button class="portion-btn" onclick="updateServings(1)">+</button>
             </div>
 
-            <h3 class="section-title">Bahan-Bahan</h3>
+            <h3 class="section-title">Bahan-Bahan Resep</h3>
             <ul class="ingredients-list">${ingredientsHTML}</ul>
 
             <h3 class="section-title">Langkah Memasak</h3>
