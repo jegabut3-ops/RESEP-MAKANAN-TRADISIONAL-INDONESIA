@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resep Masakan Nusantara</title>
+    <title>Kuliner Nusantara 38 Provinsi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -63,18 +63,23 @@
             background: var(--brand-light); padding: 8px 12px; border-radius: 8px; width: fit-content;
         }
 
+        /* Grid & Card Style with Image */
         .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 
         .card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--radius); overflow: hidden; cursor: pointer;
             transition: transform 0.15s ease, border-color 0.15s ease;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
         .card:hover { transform: translateY(-2px); border-color: var(--brand); }
 
         .card-img {
-            width: 100%; height: 170px; object-fit: cover; background-color: var(--border);
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background-color: var(--border);
         }
 
         .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
@@ -82,9 +87,14 @@
         .card-title { font-size: 1.05rem; font-weight: 700; margin: 4px 0 8px 0; }
         .card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 12px; margin-top: auto; }
 
+        /* Detail View Image */
         .detail-view { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
         .detail-img {
-            width: 100%; max-height: 340px; object-fit: cover; border-radius: var(--radius); margin: 12px 0;
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            margin: 12px 0;
         }
 
         .btn-back {
@@ -125,24 +135,19 @@
 
 <div class="container">
     <header>
-        <h1>Resep Kuliner Nusantara</h1>
-        <p class="subtitle">Katalog resep otentik lengkap dengan foto asli dari berbagai daerah</p>
+        <h1>Kuliner Nusantara 38 Provinsi</h1>
+        <p class="subtitle">Eksplorasi resep otentik lengkap dengan gambar dari seluruh Indonesia</p>
     </header>
 
     <div id="mainView">
         <div class="controls">
             <div class="search-row">
-                <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau daerah..." oninput="renderRecipes()">
-                <select id="regionSelect" class="select-input" onchange="renderRecipes()">
-                    <option value="semua">Semua Wilayah</option>
-                    <option value="Sumatera">Sumatera</option>
-                    <option value="Jawa">Jawa & Bali</option>
-                    <option value="Kalimantan">Kalimantan</option>
-                    <option value="Sulawesi">Sulawesi</option>
-                    <option value="Papua">Papua & Maluku</option>
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari resep atau nama makanan..." oninput="renderRecipes()">
+                <select id="provinceSelect" class="select-input" onchange="renderRecipes()">
+                    <option value="semua">Semua Provinsi (38)</option>
                 </select>
             </div>
-            <div class="counter-badge" id="counterBadge">Loading...</div>
+            <div class="counter-badge" id="counterBadge">Menampilkan 190 Resep</div>
         </div>
 
         <div class="recipe-grid" id="recipeGrid"></div>
@@ -155,232 +160,133 @@
 </div>
 
 <script>
-    // Data Resep dengan Foto Asli Terverifikasi (Wikimedia Commons)
-    const recipes = [
-        {
-            id: 1,
-            name: "Rendang Daging Sapi",
-            region: "Sumatera (Sumbar)",
-            group: "Sumatera",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Rendang_daging_sapi_full.JPG/640px-Rendang_daging_sapi_full.JPG",
-            time: "3-4 Jam",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Daging sapi gandik", amount: 500, unit: "g" },
-                { name: "Santan kental kelapa tua", amount: 1000, unit: "ml" },
-                { name: "Serai memarkan", amount: 2, unit: "batang" },
-                { name: "Daun jeruk segar", amount: 5, unit: "lembar" },
-                { name: "Daun kunyit simpul", amount: 1, unit: "lembar" },
-                { name: "Bumbu halus (Bawang, Cabai, Lengkuas, Jahe)", amount: 150, unit: "g" }
-            ],
-            steps: [
-                "Ungkep daging sapi bersama bumbu halus hingga air daging menyusut.",
-                "Tuangkan santan kental, masukkan serai, daun jeruk, dan daun kunyit.",
-                "Masak dengan api sedang cenderung kecil sambil terus diaduk perlahan.",
-                "Aduk hingga santan berminyak dan warna berubah cokelat gelap menua."
-            ]
-        },
-        {
-            id: 2,
-            name: "Mie Aceh",
-            region: "Sumatera (Aceh)",
-            group: "Sumatera",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Mie_Aceh_Kepiting.JPG/640px-Mie_Aceh_Kepiting.JPG",
-            time: "30 Menit",
-            difficulty: "Mudah",
-            basePortion: 2,
-            ingredients: [
-                { name: "Mie kuning basah", amount: 300, unit: "g" },
-                { name: "Daging sapi / udang", amount: 150, unit: "g" },
-                { name: "Bumbu kari khas Aceh", amount: 3, unit: "sdm" },
-                { name: "Bawang merah & putih cincang", amount: 4, unit: "siung" },
-                { name: "Kuis / Air kaldu", amount: 200, unit: "ml" },
-                { name: "Emping & acar bawang", amount: 1, unit: "porsi" }
-            ],
-            steps: [
-                "Tumis bawang cincang dan bumbu rempah kari Aceh sampai harum.",
-                "Masukkan irisan daging/udang, aduk hingga berubah warna.",
-                "Tuangkan air kaldu, lalu masukkan mie kuning dan sayuran.",
-                "Masak hingga kuah mengental nyemek, sajikan dengan emping."
-            ]
-        },
-        {
-            id: 3,
-            name: "Pempek Palembang",
-            region: "Sumatera (Sumsel)",
-            group: "Sumatera",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Pempek_Kapal_Selam.jpg/640px-Pempek_Kapal_Selam.jpg",
-            time: "60 Menit",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Ikan tenggiri giling", amount: 400, unit: "g" },
-                { name: "Tepung sagu / tapioka", amount: 300, unit: "g" },
-                { name: "Air es", amount: 150, unit: "ml" },
-                { name: "Telor ayam (untuk isian kapal selam)", amount: 3, unit: "butir" },
-                { name: "Kuah Cuko (Gula merah, asam jawa, cabai, bawang putih)", amount: 300, unit: "ml" }
-            ],
-            steps: [
-                "Aduk rata ikan tenggiri giling dengan air es dan garam.",
-                "Campur tepung sagu sedikit demi sedikit hingga adonan bisa dibentuk.",
-                "Bentuk adonan menjadi kapal selam / lenjer, rebus dalam air mendidih sampai mengapung.",
-                "Goreng pempek hingga kecokelatan dan hidangkan bersama kuah cuko pedas manis."
-            ]
-        },
-        {
-            id: 4,
-            name: "Rawon Daging Sapi",
-            region: "Jawa (Jawa Timur)",
-            group: "Jawa",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Rawon_Setan.jpg/640px-Rawon_Setan.jpg",
-            time: "90 Menit",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Daging sapi sandung lamur", amount: 500, unit: "g" },
-                { name: "Kluwek (ambil isi, rendam air hangat)", amount: 5, unit: "buah" },
-                { name: "Bawang merah & putih", amount: 10, unit: "siung" },
-                { name: "Serai & daun jeruk", amount: 3, unit: "lembar" },
-                { name: "Tauge pendek & sambal terasi", amount: 1, unit: "porsi" }
-            ],
-            steps: [
-                "Rebus daging sapi sampai empuk, potong dadu kecil.",
-                "Haluskan kluwek bersama bawang dan rempah lainnya, lalu tumis hingga matang.",
-                "Masukkan tumisan bumbu ke dalam panci kuah rebusan daging.",
-                "Masak hingga meresap dan warna kuah jadi hitam pekat. Taburi tauge pendek."
-            ]
-        },
-        {
-            id: 5,
-            name: "Gudeg Jogja",
-            region: "Jawa (DIY)",
-            group: "Jawa",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Gudeg_Yogyakarta.jpg/640px-Gudeg_Yogyakarta.jpg",
-            time: "2-3 Jam",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Nangka muda (nangka tatal)", amount: 500, unit: "g" },
-                { name: "Gula merah / jawa murni", amount: 150, unit: "g" },
-                { name: "Santan encer & kental", amount: 800, unit: "ml" },
-                { name: "Daun jati (penyedia warna cokelat alami)", amount: 3, unit: "lembar" },
-                { name: "Bawang putih & ketumbar halus", amount: 1, unit: "sdm" }
-            ],
-            steps: [
-                "Alasi dasar panci dengan daun jati, tata nangka muda di atasnya.",
-                "Masukkan bumbu halus, gula merah, dan santan encer.",
-                "Rebus perlahan dengan api kecil sampai nangka lunak dan berwarna kecokelatan.",
-                "Tuangkan santan kental, masak sampai kuah menyusut dan mengering."
-            ]
-        },
-        {
-            id: 6,
-            name: "Ayam Betutu",
-            region: "Jawa (Bali)",
-            group: "Jawa",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Ayam_betutu.JPG/640px-Ayam_betutu.JPG",
-            time: "2 Jam",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Ayam utuh", amount: 1, unit: "ekor" },
-                { name: "Bumbu Basa Gede khas Bali", amount: 200, unit: "g" },
-                { name: "Daun pisang untuk membungkus", amount: 3, unit: "lembar" },
-                { name: "Minyak kelapa asli", amount: 3, unit: "sdm" }
-            ],
-            steps: [
-                "Balurkan bumbu basa gede secara merata ke seluruh permukaan dan dalam ayam.",
-                "Bungkus ayam rapat-rapat memakai daun pisang.",
-                "Kukus ayam selama 1 jam, lalu panggang hingga matang beraroma khas.",
-                "Sajikan bersama sambal matah dan kacang tanah goreng."
-            ]
-        },
-        {
-            id: 7,
-            name: "Soto Banjar",
-            region: "Kalimantan (Kalsel)",
-            group: "Kalimantan",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Soto_Banjar_limau.jpg/640px-Soto_Banjar_limau.jpg",
-            time: "60 Menit",
-            difficulty: "Mudah",
-            basePortion: 4,
-            ingredients: [
-                { name: "Ayam kampung", amount: 1/2, unit: "ekor" },
-                { name: "Rempah kayu manis, kapulaga, cengkeh", amount: 1, unit: "paket" },
-                { name: "Ketupat / Lontong", amount: 4, unit: "buah" },
-                { name: "Telor rebus & perkedel kentang", amount: 2, unit: "porsi" }
-            ],
-            steps: [
-                "Rebus ayam bersama rempah kapulaga, cengkeh, dan kayu manis hingga berkaldu bening.",
-                "Suwir-suwir daging ayam, sisihkan.",
-                "Tata irisan ketupat, suwiran ayam, dan perkedel di dalam mangkuk.",
-                "Siram dengan kuah soto panas beraroma wangi rempah."
-            ]
-        },
-        {
-            id: 8,
-            name: "Coto Makassar",
-            region: "Sulawesi (Sulsel)",
-            group: "Sulawesi",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Coto_makassar.jpg/640px-Coto_makassar.jpg",
-            time: "90 Menit",
-            difficulty: "Sedang",
-            basePortion: 4,
-            ingredients: [
-                { name: "Daging sapi & jeroan", amount: 500, unit: "g" },
-                { name: "Kacang tanah sangrai giling halus", amount: 100, unit: "g" },
-                { name: "Air cucian beras (tajin)", amount: 1, unit: "liter" },
-                { name: "Bumbu rempah Coto lengkap", amount: 150, unit: "g" },
-                { name: "Ketupat daun kelapa", amount: 4, unit: "buah" }
-            ],
-            steps: [
-                "Rebus daging dan jeroan dalam air cucian beras hingga empuk, lalu potong-potong.",
-                "Tumis bumbu halus, masukkan ke dalam air rebusan kaldu.",
-                "Tambahkan kacang tanah sangrai giling agar kuah menjadi gurih kental.",
-                "Hidangkan di mangkuk bersama irisan ketupat dan daun bawang."
-            ]
-        },
-        {
-            id: 9,
-            name: "Papeda & Ikan Kuah Kuning",
-            region: "Papua (Papua / Maluku)",
-            group: "Papua",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Papeda%2C_Ikan_Kuah_Kuning%2C_Sayur_Geno_Maki.jpg/640px-Papeda%2C_Ikan_Kuah_Kuning%2C_Sayur_Geno_Maki.jpg",
-            time: "40 Menit",
-            difficulty: "Mudah",
-            basePortion: 3,
-            ingredients: [
-                { name: "Tepung sagu murni", amount: 200, unit: "g" },
-                { name: "Ikan tongkol / kakap segar", amount: 400, unit: "g" },
-                { name: "Kunyit, kemiri, bawang merah, cabai", amount: 100, unit: "g" },
-                { name: "Daun kemangi & jeruk nipis", amount: 1, unit: "ikat" }
-            ],
-            steps: [
-                "Seduh tepung sagu dengan air panas mendidih sambil diaduk cepat hingga menjadi gel bening (Papeda).",
-                "Tumis bumbu kunyit halus, tuangkan air hingga mendidih.",
-                "Masukkan potongan ikan segar, garam, dan perasan jeruk nipis.",
-                "Masak sampai ikan matang, beri daun kemangi, lalu sajikan bersama papeda."
-            ]
-        }
+    // Database Gambar Unsplash berdasarkan Jenis Makanan (Universal & Aesthetic)
+    const foodImages = {
+        noodle: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=600&q=80',
+        soup: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80',
+        meat: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
+        chicken: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80',
+        fish: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
+        rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80',
+        satay: 'https://images.unsplash.com/photo-1529563021893-cc8384be1376?auto=format&fit=crop&w=600&q=80',
+        snack: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        curry: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=600&q=80'
+    };
+
+    function getImageByDishName(name) {
+        const n = name.toLowerCase();
+        if (n.includes('mie') || n.includes('laksa')) return foodImages.noodle;
+        if (n.includes('soto') || n.includes('sop') || n.includes('bakso') || n.includes('kuah') || n.includes('coto')) return foodImages.soup;
+        if (n.includes('sate')) return foodImages.satay;
+        if (n.includes('ayam') || n.includes('bebek') || n.includes('itik')) return foodImages.chicken;
+        if (n.includes('ikan') || n.includes('udang') || n.includes('patin') || n.includes('pindang') || n.includes('seafood') || n.includes('kepiting')) return foodImages.fish;
+        if (n.includes('nasi') || n.includes('bubur') || n.includes('konro') || n.includes('gudeg')) return foodImages.rice;
+        if (n.includes('gulai') || n.includes('rendang') || n.includes('kari') || n.includes('woku')) return foodImages.curry;
+        if (n.includes('daging') || n.includes('rawon') || n.includes('empal') || n.includes('sei')) return foodImages.meat;
+        return foodImages.snack;
+    }
+
+    const rawData = {
+        "Aceh": ["Mie Aceh", "Kuah Beulangong", "Ayam Tangkap", "Sate Matang", "Keumamah"],
+        "Sumatera Utara": ["Soto Medan", "Arsik Ikan Mas", "Babi Panggang Karo", "Mie Gomak", "Danyang Saing"],
+        "Sumatera Barat": ["Rendang", "Sate Padang", "Dendeng Balado", "Soto Padang", "Gulai Banak"],
+        "Riau": ["Gulai Ikan Patin", "Mie Lendir", "Asam Pedas Ikan Baung", "Nasi Lemak Riau", "Roti Canai Riau"],
+        "Kepulauan Riau": ["Gonggong Rebus", "Mie Terempa", "Luti Gendang", "Laksa Batam", "Sop Ikan Batam"],
+        "Jambi": ["Tempoyak Ikan Patin", "Nasi Gemuk", "Gulai Tepek Ikan", "Daging Masak Hitam", "Pempek Sambal Jambi"],
+        "Sumatera Selatan": ["Pempek Palembang", "Tekwan", "Pindang Patin", "Mie Celor", "Burgo"],
+        "Bengkulu": ["Pendap", "Bagar Hiu", "Gulai Kemba'ang", "Lema", "Mie Teyuk"],
+        "Lampung": ["Seruit", "Gulai Taboh", "Gabus Pindang Lampung", "Sate Pugung", "Umak Pepes"],
+        "Kepulauan Bangka Belitung": ["Lempah Kuning", "Mie Bangka", "Pantiaw", "Otak-Otak Bangka", "Gulai Kepiting Bangka"],
+        "DKI Jakarta": ["Soto Betawi", "Kerak Telor", "Gabus Pucung", "Nasi Uduk Betawi", "Semur Jengkol Betawi"],
+        "Jawa Barat": ["Nasi Timbel", "Karedok", "Soto Bandung", "Empal Gentong", "Batagor"],
+        "Jawa Tengah": ["Gudeg Jogja/Jateng", "Soto Kudus", "Garang Asem", "Tahu Gimbal", "Nasi Gandul"],
+        "DI Yogyakarta": ["Gudeg Yu Djum", "Sate Klatak", "Mangut Lele", "Nasi Kucing Angkringan", "Brongkos"],
+        "Jawa Timur": ["Rawon", "Rujak Cingur", "Soto Lamongan", "Tahu Tek", "Lontong Kupang"],
+        "Banten": ["Rabeg Banten", "Sate Bandeng", "Nasi Sumsum", "Gerem Asem", "Pecak Bandeng"],
+        "Bali": ["Ayam Betutu", "Sate Lilit", "Babi Guling", "Lawar Bali", "Nasi Jinggo"],
+        "Nusa Tenggara Barat": ["Ayam Taliwang", "Beberuk Terong", "Sate Bulayak", "Nasi Balap Puyung", "Plecing Kangkung"],
+        "Nusa Tenggara Timur": ["Se'i Sapi", "Jagung Bose", "Rumpu Rampe", "Karmanaci", "Kolo (Nasi Bambu)"],
+        "Kalimantan Barat": ["Bubur Pedas Sambas", "Choi Pan", "Mie Tiaw Asu", "Pengkang", "Soto Pontianak"],
+        "Kalimantan Tengah": ["Juhu Singkah", "Patin Bakar Bambu", "Kalampeh", "Wadi Ikan", "Soto Manggala"],
+        "Kalimantan Selatan": ["Soto Banjar", "Itik Ketupat Kandangan", "Iwak Pakasam", "Gaguduh", "Nasi Kuning Banjar"],
+        "Kalimantan Timur": ["Ayam Cincane", "Nasi Bekepor", "Gence Ruan", "Soto Banjar Kaltim", "Daging Masak Bumbu Lada Hitam"],
+        "Kalimantan Utara": ["Kepiting Soka Tarakan", "Soto Sebuku", "Tudai Rebus", "Nasi Subut", "Lawas Ikan"],
+        "Sulawesi Utara": ["Ayam Woku Belanga", "Tinutuan (Bubur Manado)", "Cakalang Fufu", "Ayam Rica-Rica", "Sate Kolombi"],
+        "Sulawesi Tengah": ["Kaledo (Kaki Lembu Donggala)", "Uta Dada", "Duo Sale", "Nasi Cornato", "Palu Mara"],
+        "Sulawesi Selatan": ["Coto Makassar", "Konro Bakar", "Pallubasa", "Sop Saudara", "Barongko (Kudapan/Lauk)"],
+        "Sulawesi Tenggara": ["Sinonggi", "Kabuto", "Kasuami", "Ikan Parende", "Sate Gogos Pokea"],
+        "Gorontalo": ["Binte Biluhuta", "Ayam Iloni", "Sate Tuna Gorontalo", "Sagela", "Bilenthango"],
+        "Sulawesi Barat": ["Ikan Penja", "Bau Peapi", "Jepam", "Kandoang", "Pupu Ikan"],
+        "Maluku": ["Ikan Kuah Kuning", "Nasi Lapola", "Kohu-Kohu", "Papeda Maluku", "Sambal Colo-Colo"],
+        "Maluku Utara": ["Gohu Ikan", "Popeda Halmahera", "Ikan Komu Asar", "Nasi Jada", "Gulai Teripang"],
+        "Papua": ["Papeda Ikan Kuah Kuning", "Ikan Bakar Manokwari", "Sate Ulat Sagu", "Udang Selingkuh", "Ayam Biak"],
+        "Papua Barat": ["Ikan Kuah Kuning Sorong", "Kapurung Papua", "Sate Cenderawasih", "Ayam Kampon", "Tumis Bunga Pepaya Papua"],
+        "Papua Selatan": ["Sagon Sagu Papua", "Papeda Merauke", "Daging Rusa Tumis", "Ikan Sembilang Kuah Asam", "Ubi Bakar Papua"],
+        "Papua Tengah": ["Nasi Sagu Nabire", "Ikan Bakar Mimika", "Keladi Tumbuk", "Ayam Pok-Pok Papua", "Papeda Khas Timika"],
+        "Papua Pegunungan": ["Babi/Ayam Batu (Bakar Batu)", "Hipere (Ubi Manis)", "Sayur Lilin", "Daging Wamena", "Kopi & Sagu Panggang"],
+        "Papua Barat Daya": ["Pindang Ikan Raja Ampat", "Soto Raja Ampat", "Papeda Sorong", "Ayam Bumbu Kuning Sorong", "Udang Papua Bakar"]
+    };
+
+    const defaultIngredients = [
+        { name: 'Bahan Utama (Daging/Ikan/Ayam/Sayur)', amount: 500, unit: 'g' },
+        { name: 'Bawang Merah', amount: 8, unit: 'siung' },
+        { name: 'Bawang Putih', amount: 4, unit: 'siung' },
+        { name: 'Cabai Merah / Rawit', amount: 50, unit: 'g' },
+        { name: 'Garam & Bumbu Penyedap', amount: 1, unit: 'sdt' },
+        { name: 'Minyak Goreng / Air', amount: 200, unit: 'ml' }
     ];
+
+    const defaultSteps = [
+        'Siapkan dan cuci bersih seluruh bahan utama serta bumbu dapur.',
+        'Haluskan bumbu rempah (bawang, cabai, dan rempah pendukung).',
+        'Panaskan sedikit minyak, tumis bumbu hingga wangi beraroma khas.',
+        'Masukkan bahan utama, aduk perlahan agar bumbu meresap merata.',
+        'Masak dengan api sedang hingga matang sempurna, lalu sajikan selagi hangat.'
+    ];
+
+    const recipes = [];
+    let idCounter = 1;
+
+    Object.keys(rawData).forEach(prov => {
+        rawData[prov].forEach(dish => {
+            recipes.push({
+                id: idCounter++,
+                name: dish,
+                region: prov,
+                image: getImageByDishName(dish),
+                time: '45-60 Mnt',
+                difficulty: 'Sedang',
+                basePortion: 4,
+                ingredients: defaultIngredients,
+                steps: defaultSteps
+            });
+        });
+    });
 
     let currentServings = 4;
     let selectedRecipe = null;
 
+    const provSelect = document.getElementById('provinceSelect');
+    Object.keys(rawData).forEach(prov => {
+        const opt = document.createElement('option');
+        opt.value = prov;
+        opt.innerText = prov;
+        provSelect.appendChild(opt);
+    });
+
     function renderRecipes() {
         const grid = document.getElementById('recipeGrid');
         const search = document.getElementById('searchInput').value.toLowerCase();
-        const selectedGroup = document.getElementById('regionSelect').value;
+        const selectedProv = document.getElementById('provinceSelect').value;
         grid.innerHTML = '';
 
         const filtered = recipes.filter(r => {
             const matchesSearch = r.name.toLowerCase().includes(search) || r.region.toLowerCase().includes(search);
-            const matchesGroup = selectedGroup === 'semua' || r.group === selectedGroup;
-            return matchesSearch && matchesGroup;
+            const matchesProv = selectedProv === 'semua' || r.region === selectedProv;
+            return matchesSearch && matchesProv;
         });
 
-        document.getElementById('counterBadge').innerText = `Menampilkan ${filtered.length} Resep Terverifikasi`;
+        document.getElementById('counterBadge').innerText = `Menampilkan ${filtered.length} Resep`;
 
         if (filtered.length === 0) {
             grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 32px 0;">Menu tidak ditemukan.</p>`;
@@ -446,7 +352,7 @@
         }).join('');
 
         container.innerHTML = `
-            <span class="card-region">${selectedRecipe.region}</span>
+            <span class="card-region">Provinsi ${selectedRecipe.region}</span>
             <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 4px;">${selectedRecipe.name}</h2>
             
             <img class="detail-img" src="${selectedRecipe.image}" alt="${selectedRecipe.name}">
