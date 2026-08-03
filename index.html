@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tugas Rumah + Bukti Foto/Kamera</title>
+    <title>Penugasan Rumah & Bukti Foto</title>
     <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
+            --success: #10b981;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text: #0f172a;
@@ -34,9 +35,9 @@
 
         .container {
             background-color: var(--card-bg);
-            padding: 20px;
+            padding: 24px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
             width: 100%;
             max-width: 600px;
         }
@@ -44,14 +45,38 @@
         h1 {
             font-size: 22px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 6px;
             text-align: center;
+            color: var(--text);
         }
 
-        /* Form Input */
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Banner Mode Tugas Terkirim */
+        .assigned-banner {
+            background-color: #e0e7ff;
+            border: 1px solid #c7d2fe;
+            color: #3730a3;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .assigned-banner h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        /* Form Card */
         .form-card {
             background-color: #f1f5f9;
-            padding: 15px;
+            padding: 18px;
             border-radius: 12px;
             margin-bottom: 20px;
             display: flex;
@@ -59,13 +84,20 @@
             gap: 12px;
         }
 
-        .input-row {
+        .form-group {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        input[type="text"], select {
-            padding: 10px;
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        input[type="text"], input[type="date"], select {
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
             outline: none;
@@ -74,12 +106,82 @@
             width: 100%;
         }
 
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row .form-group {
+            flex: 1;
+        }
+
+        .btn-main {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn-main:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-share {
+            background-color: #0284c7;
+        }
+
+        .btn-share:hover {
+            background-color: #0369a1;
+        }
+
+        .btn-complete {
+            background-color: var(--success);
+        }
+
+        .btn-complete:hover {
+            background-color: #059669;
+        }
+
+        /* Modal Share Link */
+        .share-modal {
+            display: none;
+            background: #fff;
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .share-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .share-input-group input {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        /* Camera Section */
         .photo-input-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
             background: #fff;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px dashed #cbd5e0;
         }
@@ -90,7 +192,7 @@
         }
 
         .btn-secondary {
-            background-color: #0284c7;
+            background-color: #475569;
             color: white;
             border: none;
             padding: 8px 12px;
@@ -101,18 +203,6 @@
             flex: 1;
         }
 
-        .btn-add {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        /* Area Kamera Live */
         #cameraArea {
             display: none;
             flex-direction: column;
@@ -132,14 +222,14 @@
 
         #previewImage {
             max-width: 100%;
-            max-height: 150px;
+            max-height: 180px;
             border-radius: 6px;
             display: none;
             object-fit: cover;
             margin-top: 5px;
         }
 
-        /* List Items */
+        /* Task Cards List */
         ul {
             list-style: none;
         }
@@ -147,50 +237,76 @@
         li {
             background-color: white;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .task-main {
+        li.completed {
+            background-color: #f8fafc;
+            border-color: #cbd5e0;
+        }
+
+        .task-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
         }
 
-        .info {
-            cursor: pointer;
-            flex: 1;
+        .task-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
         }
 
-        .title {
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        li.completed .title {
-            text-decoration: line-through;
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+            font-size: 12px;
             color: var(--text-muted);
         }
 
         .badge {
-            font-size: 11px;
             background-color: #e2e8f0;
-            padding: 2px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
-            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .badge-date {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .proof-img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .status-tag {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
             display: inline-block;
         }
 
-        .proof-photo {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+        .status-pending {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .status-done {
+            background-color: #d1fae5;
+            color: #047857;
         }
 
         .btn-delete {
@@ -207,66 +323,184 @@
 <body>
 
     <div class="container">
-        <h1>📸 Tugas Rumah + Bukti Foto</h1>
+        <h1>🏠 Penugasan Rumah & Bukti Foto</h1>
+        <p class="subtitle">Kirim tugas ke orang lain via Link & Upload Bukti Foto saat selesai</p>
 
-        <div class="form-card">
-            <input type="text" id="taskTitle" placeholder="Nama tugas (misal: Menyapu Dapur)...">
-            
-            <div class="input-row">
-                <select id="taskCategory">
-                    <option value="Dapur">🍳 Dapur</option>
-                    <option value="Kamar">🛏️ Kamar</option>
-                    <option value="Ruang Tamu">🛋️ Ruang Tamu</option>
-                    <option value="Halaman">🌱 Halaman</option>
-                </select>
-            </div>
-
-            <div class="photo-input-group">
-                <label style="font-size: 12px; font-weight: 600; color: #475569;">📷 Bukti Pengerjaan (Opsional):</label>
-                <div class="photo-buttons">
-                    <button type="button" class="btn-secondary" onclick="startCamera()">📷 Ambil via Kamera</button>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                    <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Pilih dari Galeri</button>
-                </div>
-
-                <div id="cameraArea">
-                    <video id="webcam" autoplay playsinline></video>
-                    <button type="button" class="btn-secondary" style="background:#10b981;" onclick="takeSnap()">📸 Jepret Foto</button>
-                </div>
-
-                <img id="previewImage" alt="Preview Bukti">
-            </div>
-
-            <button class="btn-add" onclick="addTask()">+ Simpan Tugas</button>
+        <!-- Banner jika membuka tugas via Link dari orang lain -->
+        <div id="assignedBanner" class="assigned-banner" style="display: none;">
+            <h3>📥 Anda Menerima Penugasan!</h3>
+            <p id="assignedDetails"></p>
         </div>
 
+        <!-- Form Pembuat Tugas (Pemberi Tugas) -->
+        <div id="creatorForm" class="form-card">
+            <h3 style="font-size: 15px; margin-bottom: 5px;">1. Buat & Bagikan Tugas Baru</h3>
+            
+            <div class="form-group">
+                <label>Nama Tugas Rumah:</label>
+                <input type="text" id="taskTitle" placeholder="Misal: Menyapu & Mengepel Ruang Tamu...">
+            </div>
+
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Area / Kategori:</label>
+                    <select id="taskCategory">
+                        <option value="Dapur">🍳 Dapur</option>
+                        <option value="Kamar Tidur">🛏️ Kamar Tidur</option>
+                        <option value="Ruang Tamu">🛋️ Ruang Tamu</option>
+                        <option value="Kamar Mandi">🚿 Kamar Mandi</option>
+                        <option value="Halaman">🌱 Halaman</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Target (Deadline):</label>
+                    <input type="date" id="taskDueDate">
+                </div>
+            </div>
+
+            <button class="btn-main btn-share" onclick="generateShareLink()">🔗 Buat Link Tugas & Bagikan</button>
+
+            <!-- Box Hasil Link -->
+            <div id="shareModal" class="share-modal">
+                <label>Salin & Kirim link ini ke WA/Pesan orang yang ditugaskan:</label>
+                <div class="share-input-group">
+                    <input type="text" id="shareUrlInput" readonly>
+                    <button class="btn-main" onclick="copyLink()">Salin Link</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Pengerjaan Tugas (Penerima Tugas) -->
+        <div id="assigneeForm" class="form-card" style="display: none;">
+            <h3 style="font-size: 15px; margin-bottom: 5px;">2. Kerjakan Tugas & Upload Bukti Foto</h3>
+
+            <div class="photo-input-group">
+                <label>📷 Ambil / Upload Foto Bukti Selesai:</label>
+                <div class="photo-buttons">
+                    <button type="button" class="btn-secondary" onclick="startCamera()">📷 Buka Kamera</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Dari Galeri</button>
+                </div>
+
+                <!-- Live Camera -->
+                <div id="cameraArea">
+                    <video id="webcam" autoplay playsinline></video>
+                    <button type="button" class="btn-main btn-complete" onclick="takeSnap()">📸 Jepret Foto Bukti</button>
+                </div>
+
+                <!-- Preview Gambar -->
+                <img id="previewImage" alt="Preview Foto">
+            </div>
+
+            <button class="btn-main btn-complete" onclick="submitCompletedTask()">✅ Tandai Tugas Selesai</button>
+        </div>
+
+        <!-- Daftar Tugas -->
+        <h3 style="font-size: 16px; margin: 20px 0 10px 0;">📋 Daftar Tugas</h3>
         <ul id="taskList"></ul>
     </div>
 
     <script>
-        let tasks = JSON.parse(localStorage.getItem('photoTasks')) || [];
+        let tasks = JSON.parse(localStorage.getItem('sharedHouseTasks')) || [];
         let currentPhotoBase64 = "";
         let stream = null;
+        let incomingTaskData = null;
 
-        document.addEventListener('DOMContentLoaded', renderTasks);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set tanggal default ke hari ini
+            document.getElementById('taskDueDate').valueAsDate = new Date();
+            
+            checkUrlParameters();
+            renderTasks();
+        });
 
-        // Akses Kamera HP / WebCam
+        // 1. CEK URL APAKAH MEMBAWA TUGAS DARI ORANG LAIN
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const taskDataParam = urlParams.get('taskData');
+
+            if (taskDataParam) {
+                try {
+                    // Decode data dari URL parameter
+                    const jsonString = decodeURIComponent(atob(taskDataParam));
+                    incomingTaskData = JSON.parse(jsonString);
+
+                    // Tampilkan Banner Informasi Tugas
+                    document.getElementById('assignedBanner').style.display = 'block';
+                    document.getElementById('assignedDetails').innerHTML = `
+                        <strong>Tugas:</strong> ${incomingTaskData.title}<br>
+                        <strong>Area:</strong> ${incomingTaskData.category} | <strong>Tanggal Target:</strong> ${incomingTaskData.dueDate}
+                    `;
+
+                    // Sembunyikan form pembuat, tampilkan form pengirim bukti
+                    document.getElementById('creatorForm').style.display = 'none';
+                    document.getElementById('assigneeForm').style.display = 'flex';
+
+                } catch (e) {
+                    console.error("Gagal membaca data tugas dari URL", e);
+                }
+            }
+        }
+
+        // 2. BAGIAN PEMBERI TUGAS: GENERATE LINK TUGAS
+        function generateShareLink() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const category = document.getElementById('taskCategory').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+
+            if (!title) {
+                alert('Silakan isi nama tugas terlebih dahulu!');
+                return;
+            }
+
+            const taskObj = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                dueDate: dueDate,
+                createdDate: new Date().toISOString().split('T')[0]
+            };
+
+            // Simpan juga ke list pembuat tugas sebagai status PENDING
+            const localTask = { ...taskObj, status: 'Belum Selesai', photo: null };
+            tasks.push(localTask);
+            saveToStorage();
+
+            // Encode data ke Base64 agar bisa dimasukkan ke dalam Link URL
+            const encodedData = btoa(encodeURIComponent(JSON.stringify(taskObj)));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?taskData=${encodedData}`;
+
+            // Tampilkan Link
+            document.getElementById('shareUrlInput').value = shareUrl;
+            document.getElementById('shareModal').style.display = 'flex';
+            
+            renderTasks();
+        }
+
+        function copyLink() {
+            const input = document.getElementById('shareUrlInput');
+            input.select();
+            document.execCommand('copy');
+            alert('Link tugas berhasil disalin! Silakan kirimkan ke WhatsApp atau aplikasi pesan teman/keluarga Anda.');
+        }
+
+        // 3. BAGIAN PENERIMA TUGAS: AKSES KAMERA & BUFFERS
         async function startCamera() {
             const cameraArea = document.getElementById('cameraArea');
             const video = document.getElementById('webcam');
 
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" } // Mengutamakan kamera belakang HP
+                    video: { facingMode: "environment" } 
                 });
                 video.srcObject = stream;
                 cameraArea.style.display = 'flex';
             } catch (err) {
-                alert("Gagal mengaktifkan kamera. Pastikan memberikan izin akses kamera.");
+                alert("Tidak dapat membuka kamera. Pastikan izin kamera sudah diaktifkan.");
             }
         }
 
-        // Ambil Foto dari Kamera
         function takeSnap() {
             const video = document.getElementById('webcam');
             const canvas = document.createElement('canvas');
@@ -276,17 +510,15 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7); // Kompresi foto
+            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6); // Kompresi foto
             showPreview(currentPhotoBase64);
 
-            // Matikan Kamera
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
             document.getElementById('cameraArea').style.display = 'none';
         }
 
-        // Ambil Foto dari File / Galeri
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
@@ -305,75 +537,83 @@
             img.style.display = 'block';
         }
 
-        function addTask() {
-            const title = document.getElementById('taskTitle').value.trim();
-            const category = document.getElementById('taskCategory').value;
-
-            if (!title) {
-                alert('Nama tugas tidak boleh kosong!');
+        // 4. SUBMIT PENGERJAAN TUGAS OLEH PENERIMA TUGAS
+        function submitCompletedTask() {
+            if (!currentPhotoBase64) {
+                alert("Silakan ambil foto bukti terlebih dahulu sebelum menandai tugas selesai!");
                 return;
             }
 
-            const newTask = {
-                id: Date.now(),
-                title: title,
-                category: category,
+            const completedTask = {
+                id: incomingTaskData.id || Date.now(),
+                title: incomingTaskData.title,
+                category: incomingTaskData.category,
+                dueDate: incomingTaskData.dueDate,
+                completedDate: new Date().toISOString().split('T')[0],
                 photo: currentPhotoBase64,
-                completed: false,
-                date: new Date().toLocaleString('id-ID')
+                status: 'Selesai'
             };
 
-            tasks.push(newTask);
-            localStorage.setItem('photoTasks', JSON.stringify(tasks));
+            // Simpan atau perbarui di LocalStorage
+            const existingIndex = tasks.findIndex(t => t.id === completedTask.id);
+            if (existingIndex !== -1) {
+                tasks[existingIndex] = completedTask;
+            } else {
+                tasks.push(completedTask);
+            }
 
-            // Reset Form
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('previewImage').style.display = 'none';
-            currentPhotoBase64 = "";
+            saveToStorage();
+            alert("Selamat! Tugas berhasil diselesaikan dan foto bukti telah disimpan.");
 
-            renderTasks();
-        }
-
-        function toggleTask(id) {
-            tasks = tasks.map(t => {
-                if (t.id === id) t.completed = !t.completed;
-                return t;
-            });
-            localStorage.setItem('photoTasks', JSON.stringify(tasks));
-            renderTasks();
+            // Reset URL dan kembali ke tampilan normal
+            window.location.href = window.location.pathname;
         }
 
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
-            localStorage.setItem('photoTasks', JSON.stringify(tasks));
+            saveToStorage();
             renderTasks();
         }
 
+        function saveToStorage() {
+            localStorage.setItem('sharedHouseTasks', JSON.stringify(tasks));
+        }
+
+        // 5. RENDER DAFTAR TUGAS
         function renderTasks() {
             const listEl = document.getElementById('taskList');
             listEl.innerHTML = '';
 
             if (tasks.length === 0) {
-                listEl.innerHTML = '<li style="text-align:center; color:#94a3b8;">Belum ada tugas tercatat.</li>';
+                listEl.innerHTML = '<li style="text-align:center; color:#94a3b8;">Belum ada tugas terdaftar.</li>';
                 return;
             }
 
             tasks.forEach(task => {
                 const li = document.createElement('li');
-                if (task.completed) li.classList.add('completed');
+                if (task.status === 'Selesai') li.classList.add('completed');
 
-                let photoHTML = task.photo 
-                    ? `<img src="${task.photo}" class="proof-photo" alt="Bukti Foto">` 
-                    : '<span style="font-size:12px; color:#94a3b8; italic;">Tidak ada foto bukti</span>';
+                const isDone = task.status === 'Selesai';
+                const statusBadge = isDone 
+                    ? `<span class="status-tag status-done">✅ Selesai (${task.completedDate || 'Hari ini'})</span>`
+                    : `<span class="status-tag status-pending">⏳ Menunggu Selesai</span>`;
+
+                const photoHTML = task.photo 
+                    ? `<img src="${task.photo}" class="proof-img" alt="Foto Bukti">`
+                    : `<div style="font-size:12px; color:#94a3b8; font-style:italic;">Belum ada foto bukti diunggah.</div>`;
 
                 li.innerHTML = `
-                    <div class="task-main">
-                        <div class="info" onclick="toggleTask(${task.id})">
-                            <div class="title">${task.completed ? '✅ ' : '⏳ '} ${task.title}</div>
-                            <span class="badge">${task.category} • ${task.date}</span>
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-meta">
+                                <span class="badge">${task.category}</span>
+                                <span class="badge badge-date">📅 Target: ${task.dueDate || 'Tanpa Tanggal'}</span>
+                            </div>
                         </div>
                         <button class="btn-delete" onclick="deleteTask(${task.id})">Hapus</button>
                     </div>
+                    <div>${statusBadge}</div>
                     ${photoHTML}
                 `;
 
