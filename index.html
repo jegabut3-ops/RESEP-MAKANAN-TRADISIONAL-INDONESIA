@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penugasan Rumah Cloud Real-Time</title>
+    <title>Penugasan Rumah & Bukti Foto</title>
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --success: #10b981;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
+:root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --success: #10b981;
+        --bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+    }
 
         * {
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -37,7 +37,7 @@
             background-color: var(--card-bg);
             padding: 24px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
             width: 100%;
             max-width: 600px;
         }
@@ -47,6 +47,7 @@
             font-weight: 700;
             margin-bottom: 6px;
             text-align: center;
+            color: var(--text);
         }
 
         .subtitle {
@@ -56,6 +57,23 @@
             margin-bottom: 20px;
         }
 
+        /* Banner Mode Tugas Terkirim */
+        .assigned-banner {
+            background-color: #e0e7ff;
+            border: 1px solid #c7d2fe;
+            color: #3730a3;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .assigned-banner h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        /* Form Card */
         .form-card {
             background-color: #f1f5f9;
             padding: 18px;
@@ -88,12 +106,19 @@
             width: 100%;
         }
 
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
         .input-row {
             display: flex;
             gap: 10px;
         }
 
-        .input-row .form-group { flex: 1; }
+        .input-row .form-group {
+            flex: 1;
+        }
 
         .btn-main {
             background-color: var(--primary);
@@ -104,27 +129,53 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 14px;
+            transition: background 0.2s;
             text-align: center;
         }
 
-        .btn-main:hover { background-color: var(--primary-hover); }
-        .btn-complete { background-color: var(--success); }
+        .btn-main:hover {
+            background-color: var(--primary-hover);
+        }
 
+        .btn-share {
+            background-color: #0284c7;
+        }
+
+        .btn-share:hover {
+            background-color: #0369a1;
+        }
+
+        .btn-complete {
+            background-color: var(--success);
+        }
+
+        .btn-complete:hover {
+            background-color: #059669;
+        }
+
+        /* Modal Share Link */
         .share-modal {
             display: none;
             background: #fff;
             border: 2px solid var(--primary);
-            padding: 12px;
+            padding: 15px;
             border-radius: 10px;
             margin-top: 10px;
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .share-input-group {
+            display: flex;
             gap: 8px;
         }
 
-        .share-input-group { display: flex; gap: 8px; }
-        .share-input-group input { flex: 1; font-size: 12px; }
+        .share-input-group input {
+            flex: 1;
+            font-size: 12px;
+        }
 
-        /* Camera Box */
+        /* Camera Section */
         .photo-input-group {
             display: flex;
             flex-direction: column;
@@ -135,7 +186,10 @@
             border: 1px dashed #cbd5e0;
         }
 
-        .photo-buttons { display: flex; gap: 8px; }
+        .photo-buttons {
+            display: flex;
+            gap: 8px;
+        }
 
         .btn-secondary {
             background-color: #475569;
@@ -145,6 +199,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
+            font-weight: 500;
             flex: 1;
         }
 
@@ -158,11 +213,27 @@
             border-radius: 8px;
         }
 
-        video { width: 100%; max-height: 250px; border-radius: 6px; background: #222; }
-        #previewImage { max-width: 100%; max-height: 180px; border-radius: 6px; display: none; object-fit: cover; }
+        video {
+            width: 100%;
+            max-height: 250px;
+            border-radius: 6px;
+            background: #222;
+        }
 
-        /* List Tugas */
-        ul { list-style: none; }
+        #previewImage {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 6px;
+            display: none;
+            object-fit: cover;
+            margin-top: 5px;
+        }
+
+        /* Task Cards List */
+        ul {
+            list-style: none;
+        }
+
         li {
             background-color: white;
             border: 1px solid var(--border);
@@ -174,243 +245,107 @@
             gap: 10px;
         }
 
-        .task-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .task-title { font-weight: 700; font-size: 16px; }
-        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; font-size: 12px; color: var(--text-muted); }
-        .badge { background-color: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-        .proof-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
-        
-        .status-tag { font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; }
-        .status-pending { background-color: #fef3c7; color: #b45309; }
-        .status-done { background-color: #d1fae5; color: #047857; }
-        .btn-delete { background-color: #fee2e2; color: #ef4444; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        li.completed {
+            background-color: #f8fafc;
+            border-color: #cbd5e0;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .task-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            background-color: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .badge-date {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .proof-img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .status-tag {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .status-done {
+            background-color: #d1fae5;
+            color: #047857;
+        }
+
+        .btn-delete {
+            background-color: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
-
-    <!-- Modul SDK Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // ⚠️ MASUKKAN CONFIG FIREBASE ANDA DI SINI
-        const firebaseConfig = {
-            apiKey: "PASTE_API_KEY_ANDA",
-            authDomain: "PROJECT_ID_ANDA.firebaseapp.com",
-            projectId: "PROJECT_ID_ANDA",
-            storageBucket: "PROJECT_ID_ANDA.appspot.com",
-            messagingSenderId: "SENDER_ID_ANDA",
-            appId: "APP_ID_ANDA"
-        };
-
-        // Inisialisasi Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let currentPhotoBase64 = "";
-        let stream = null;
-        let activeTaskIdFromUrl = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('taskDueDate').valueAsDate = new Date();
-            checkUrlParameters();
-            listenToCloudTasks();
-        });
-
-        // 1. CEK PARAMETER URL (Jika dibuka oleh penerima tugas)
-        function checkUrlParameters() {
-            const urlParams = new URLSearchParams(window.location.search);
-            activeTaskIdFromUrl = urlParams.get('taskId');
-
-            if (activeTaskIdFromUrl) {
-                document.getElementById('creatorForm').style.display = 'none';
-                document.getElementById('assigneeForm').style.display = 'flex';
-            }
-        }
-
-        // 2. TAMPILKAN DAFTAR TUGAS SECARA REAL-TIME DARI CLOUD
-        function listenToCloudTasks() {
-            onSnapshot(collection(db, "house_tasks"), (snapshot) => {
-                const listEl = document.getElementById('taskList');
-                listEl.innerHTML = '';
-
-                if (snapshot.empty) {
-                    listEl.innerHTML = '<li style="text-align:center; color:#94a3b8;">Belum ada tugas terdaftar di Database.</li>';
-                    return;
-                }
-
-                snapshot.forEach((docSnap) => {
-                    const task = docSnap.data();
-                    const taskId = docSnap.id;
-
-                    const li = document.createElement('li');
-                    const isDone = task.status === 'Selesai';
-
-                    const statusBadge = isDone 
-                        ? `<span class="status-tag status-done">✅ Selesai (${task.completedDate || 'Hari ini'})</span>`
-                        : `<span class="status-tag status-pending">⏳ Menunggu Bukti Foto</span>`;
-
-                    const photoHTML = task.photo 
-                        ? `<img src="${task.photo}" class="proof-img" alt="Foto Bukti">`
-                        : `<div style="font-size:12px; color:#94a3b8; font-style:italic;">Belum ada foto bukti diunggah.</div>`;
-
-                    li.innerHTML = `
-                        <div class="task-header">
-                            <div>
-                                <div class="task-title">${task.title}</div>
-                                <div class="task-meta">
-                                    <span class="badge">${task.category}</span>
-                                    <span class="badge">📅 Target: ${task.dueDate || '-'}</span>
-                                </div>
-                            </div>
-                            <button class="btn-delete" onclick="window.deleteCloudTask('${taskId}')">Hapus</button>
-                        </div>
-                        <div>${statusBadge}</div>
-                        ${photoHTML}
-                    `;
-
-                    listEl.appendChild(li);
-                });
-            });
-        }
-
-        // 3. PEMBERI TUGAS: BUAT TUGAS BARU KE FIREBASE
-        window.createNewTask = async function() {
-            const title = document.getElementById('taskTitle').value.trim();
-            const category = document.getElementById('taskCategory').value;
-            const dueDate = document.getElementById('taskDueDate').value;
-
-            if (!title) {
-                alert('Silakan isi nama tugas terlebih dahulu!');
-                return;
-            }
-
-            try {
-                // Simpan ke Firestore
-                const docRef = await addDoc(collection(db, "house_tasks"), {
-                    title: title,
-                    category: category,
-                    dueDate: dueDate,
-                    status: "Belum Selesai",
-                    photo: null,
-                    createdAt: new Date()
-                });
-
-                // Buat Link Penugasan
-                const shareUrl = `${window.location.origin}${window.location.pathname}?taskId=${docRef.id}`;
-                document.getElementById('shareUrlInput').value = shareUrl;
-                document.getElementById('shareModal').style.display = 'flex';
-
-                document.getElementById('taskTitle').value = '';
-            } catch (error) {
-                alert("Gagal menambahkan tugas ke cloud. Pastikan Firebase Config sudah diisi dengan benar.");
-                console.error(error);
-            }
-        };
-
-        // 4. PENERIMA TUGAS: KIKIM BUKTI FOTO KE FIREBASE
-        window.submitCompletedTask = async function() {
-            if (!currentPhotoBase64) {
-                alert("Ambil foto bukti terlebih dahulu sebelum menandai tugas selesai!");
-                return;
-            }
-
-            if (!activeTaskIdFromUrl) return;
-
-            try {
-                const taskRef = doc(db, "house_tasks", activeTaskIdFromUrl);
-                await updateDoc(taskRef, {
-                    photo: currentPhotoBase64,
-                    status: "Selesai",
-                    completedDate: new Date().toLocaleDateString('id-ID')
-                });
-
-                alert("Bukti foto berhasil terkirim! Pemberi tugas bisa melihatnya langsung dari HP mereka secara real-time.");
-                window.location.href = window.location.pathname; // Kembali ke tampilan normal
-            } catch (error) {
-                alert("Gagal mengirim bukti foto ke Cloud.");
-                console.error(error);
-            }
-        };
-
-        // Hapus Tugas dari Cloud
-        window.deleteCloudTask = async function(id) {
-            if(confirm("Yakin ingin menghapus tugas ini?")) {
-                await deleteDoc(doc(db, "house_tasks", id));
-            }
-        };
-
-        // 5. KAMERA & KONTROL GAMBAR
-        window.startCamera = async function() {
-            const cameraArea = document.getElementById('cameraArea');
-            const video = document.getElementById('webcam');
-
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                video.srcObject = stream;
-                cameraArea.style.display = 'flex';
-            } catch (err) {
-                alert("Kamera tidak dapat diakses.");
-            }
-        };
-
-        window.takeSnap = function() {
-            const video = document.getElementById('webcam');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.5); // Kompresi foto agar hemat kapasitas
-            
-            const img = document.getElementById('previewImage');
-            img.src = currentPhotoBase64;
-            img.style.display = 'block';
-
-            if (stream) stream.getTracks().forEach(track => track.stop());
-            document.getElementById('cameraArea').style.display = 'none';
-        };
-
-        window.handleFileSelect = function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentPhotoBase64 = e.target.result;
-                    const img = document.getElementById('previewImage');
-                    img.src = currentPhotoBase64;
-                    img.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.copyLink = function() {
-            const input = document.getElementById('shareUrlInput');
-            input.select();
-            document.execCommand('copy');
-            alert('Link berhasil disalin! Silakan kirimkan ke orang yang ditugaskan.');
-        };
-    </script>
 </head>
 <body>
 
     <div class="container">
-        <h1>☁️ Penugasan Rumah Cloud Real-Time</h1>
-        <p class="subtitle">Foto bukti pengerjaan langsung terhubung ke perangkat Anda</p>
+        <h1>🏠 Penugasan Rumah & Bukti Foto</h1>
+        <p class="subtitle">
+            Kirim tugas ke orang lain via Link & Upload Bukti Foto saat selesai
+        </p>
 
-        <!-- Form Pembuat Tugas -->
+        <!-- Banner jika membuka tugas via Link dari orang lain -->
+        <div id="assignedBanner" class="assigned-banner" style="display: none;">
+            <h3>📥 Anda Menerima Penugasan!</h3>
+            <p id="assignedDetails"></p>
+        </div>
+
+        <!-- Form Pembuat Tugas (Pemberi Tugas) -->
         <div id="creatorForm" class="form-card">
-            <h3 style="font-size: 15px;">1. Buat & Bagikan Tugas Baru</h3>
-            
+            <h3 style="font-size: 15px; margin-bottom: 5px;">1. Buat & Bagikan Tugas Baru</h3>
+
             <div class="form-group">
                 <label>Nama Tugas Rumah:</label>
-                <input type="text" id="taskTitle" placeholder="Misal: Mengepel Ruang Tamu...">
+                <input type="text" id="taskTitle" placeholder="Misal: Menyapu & Mengepel Ruang Tamu...">
             </div>
 
             <div class="input-row">
                 <div class="form-group">
-                    <label>Area:</label>
+                    <label>Area / Kategori:</label>
                     <select id="taskCategory">
                         <option value="Dapur">🍳 Dapur</option>
                         <option value="Kamar Tidur">🛏️ Kamar Tidur</option>
@@ -421,59 +356,276 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Tanggal Target:</label>
+                    <label>Tanggal Target (Deadline):</label>
                     <input type="date" id="taskDueDate">
                 </div>
             </div>
 
-            <button class="btn-main" onclick="createNewTask()">🔗 Buat Tugas & Dapatkan Link</button>
+            <button class="btn-main btn-share" onclick="generateShareLink()">🔗 Buat Link Tugas & Bagikan</button>
 
-            <!-- Box Salin Link -->
+            <!-- Box Hasil Link -->
             <div id="shareModal" class="share-modal">
-                <label>Salin & kirimkan link ini ke penerima tugas:</label>
+                <label>Salin & Kirim link ini ke WA/Pesan orang yang ditugaskan:</label>
                 <div class="share-input-group">
                     <input type="text" id="shareUrlInput" readonly>
-                    <button class="btn-main" onclick="copyLink()">Salin</button>
+                    <button class="btn-main" onclick="copyLink()">Salin Link</button>
                 </div>
             </div>
         </div>
 
-        <!-- Form Penerima Tugas -->
+        <!-- Form Pengerjaan Tugas (Penerima Tugas) -->
         <div id="assigneeForm" class="form-card" style="display: none;">
-            <h3 style="font-size: 15px;">2. Upload Bukti Foto Pengerjaan</h3>
+            <h3 style="font-size: 15px; margin-bottom: 5px;">2. Kerjakan Tugas & Upload Bukti Foto</h3>
 
             <div class="photo-input-group">
+                <label>📷 Ambil / Upload Foto Bukti Selesai:</label>
                 <div class="photo-buttons">
-                    <button type="button" class="btn-secondary" onclick="startCamera()">📷 Ambil Foto via Kamera</button>
+                    <button type="button" class="btn-secondary" onclick="startCamera()">📷 Buka Kamera</button>
                     <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
                     <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Dari Galeri</button>
                 </div>
 
+                <!-- Live Camera -->
                 <div id="cameraArea">
                     <video id="webcam" autoplay playsinline></video>
-                    <button type="button" class="btn-main btn-complete" onclick="takeSnap()">📸 Jepret Foto</button>
+                    <button type="button" class="btn-main btn-complete" onclick="takeSnap()">📸 Jepret Foto Bukti</button>
                 </div>
 
+                <!-- Preview Gambar -->
                 <img id="previewImage" alt="Preview Foto">
             </div>
 
-            <button class="btn-main btn-complete" onclick="submitCompletedTask()">✅ Kirim Bukti ke Pemberi Tugas</button>
+            <button class="btn-main btn-complete" onclick="submitCompletedTask()">✅ Tandai Tugas Selesai</button>
         </div>
 
         <!-- Daftar Tugas -->
-        <h3 style="font-size: 16px; margin: 20px 0 10px 0;">📋 Monitoring Tugas Terkini</h3>
+        <h3 style="font-size: 16px; margin: 20px 0 10px 0;">📋 Daftar Tugas</h3>
         <ul id="taskList"></ul>
     </div>
 
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('sharedHouseTasks')) || [];
+        let currentPhotoBase64 = "";
+        let stream = null;
+        let incomingTaskData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set tanggal default ke hari ini
+            document.getElementById('taskDueDate').valueAsDate = new Date();
+
+            checkUrlParameters();
+            renderTasks();
+        });
+
+        // 1. CEK URL APAKAH MEMBAWA TUGAS DARI ORANG LAIN
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const taskDataParam = urlParams.get('taskData');
+
+            if (taskDataParam) {
+                try {
+                    // Decode data dari URL parameter
+                    const jsonString = decodeURIComponent(atob(taskDataParam));
+                    incomingTaskData = JSON.parse(jsonString);
+
+                    // Tampilkan Banner Informasi Tugas
+                    document.getElementById('assignedBanner').style.display = 'block';
+                    document.getElementById('assignedDetails').innerHTML = `
+                    <strong>Tugas:</strong> ${incomingTaskData.title}<br>
+                    <strong>Area:</strong> ${incomingTaskData.category} | <strong>Tanggal Target:</strong> ${incomingTaskData.dueDate}
+                    `;
+
+                    // Sembunyikan form pembuat, tampilkan form pengirim bukti
+                    document.getElementById('creatorForm').style.display = 'none';
+                    document.getElementById('assigneeForm').style.display = 'flex';
+
+                } catch (e) {
+                    console.error("Gagal membaca data tugas dari URL", e);
+                }
+            }
+        }
+
+        // 2. BAGIAN PEMBERI TUGAS: GENERATE LINK TUGAS
+        function generateShareLink() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const category = document.getElementById('taskCategory').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+
+            if (!title) {
+                alert('Silakan isi nama tugas terlebih dahulu!');
+                return;
+            }
+
+            const taskObj = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                dueDate: dueDate,
+                createdDate: new Date().toISOString().split('T')[0]
+            };
+
+            // Simpan juga ke list pembuat tugas sebagai status PENDING
+            const localTask = {
+                ...taskObj,
+                status: 'Belum Selesai',
+                photo: null
+            };
+            tasks.push(localTask);
+            saveToStorage();
+
+            // Encode data ke Base64 agar bisa dimasukkan ke dalam Link URL
+            const encodedData = btoa(encodeURIComponent(JSON.stringify(taskObj)));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?taskData=${encodedData}`;
+
+            // Tampilkan Link
+            document.getElementById('shareUrlInput').value = shareUrl;
+            document.getElementById('shareModal').style.display = 'flex';
+
+            renderTasks();
+        }
+
+        function copyLink() {
+            const input = document.getElementById('shareUrlInput');
+            input.select();
+            document.execCommand('copy');
+            alert('Link tugas berhasil disalin! Silakan kirimkan ke WhatsApp atau aplikasi pesan teman/keluarga Anda.');
+        }
+
+        // 3. BAGIAN PENERIMA TUGAS: AKSES KAMERA & BUFFERS
+        async function startCamera() {
+            const cameraArea = document.getElementById('cameraArea');
+            const video = document.getElementById('webcam');
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                });
+                video.srcObject = stream;
+                cameraArea.style.display = 'flex';
+            } catch (err) {
+                alert("Tidak dapat membuka kamera. Pastikan izin kamera sudah diaktifkan.");
+            }
+        }
+
+        function takeSnap() {
+            const video = document.getElementById('webcam');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6); // Kompresi foto
+            showPreview(currentPhotoBase64);
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('cameraArea').style.display = 'none';
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentPhotoBase64 = e.target.result;
+                    showPreview(currentPhotoBase64);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showPreview(src) {
+            const img = document.getElementById('previewImage');
+            img.src = src;
+            img.style.display = 'block';
+        }
+
+        // 4. SUBMIT PENGERJAAN TUGAS OLEH PENERIMA TUGAS
+        function submitCompletedTask() {
+            if (!currentPhotoBase64) {
+                alert("Silakan ambil foto bukti terlebih dahulu sebelum menandai tugas selesai!");
+                return;
+            }
+
+            const completedTask = {
+                id: incomingTaskData.id || Date.now(),
+                title: incomingTaskData.title,
+                category: incomingTaskData.category,
+                dueDate: incomingTaskData.dueDate,
+                completedDate: new Date().toISOString().split('T')[0],
+                photo: currentPhotoBase64,
+                status: 'Selesai'
+            };
+
+            // Simpan atau perbarui di LocalStorage
+            const existingIndex = tasks.findIndex(t => t.id === completedTask.id);
+            if (existingIndex !== -1) {
+                tasks[existingIndex] = completedTask;
+            } else {
+                tasks.push(completedTask);
+            }
+
+            saveToStorage();
+            alert("Selamat! Tugas berhasil diselesaikan dan foto bukti telah disimpan.");
+
+            // Reset URL dan kembali ke tampilan normal
+            window.location.href = window.location.pathname;
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveToStorage();
+            renderTasks();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('sharedHouseTasks', JSON.stringify(tasks));
+        }
+
+        // 5. RENDER DAFTAR TUGAS
+        function renderTasks() {
+            const listEl = document.getElementById('taskList');
+            listEl.innerHTML = '';
+
+            if (tasks.length === 0) {
+                listEl.innerHTML = '<li style="text-align:center; color:#94a3b8;">Belum ada tugas terdaftar.</li>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                if (task.status === 'Selesai') li.classList.add('completed');
+
+                const isDone = task.status === 'Selesai';
+                const statusBadge = isDone
+                ? `<span class="status-tag status-done">✅ Selesai (${task.completedDate || 'Hari ini'})</span>`: `<span class="status-tag status-pending">⏳ Menunggu Selesai</span>`;
+
+                const photoHTML = task.photo
+                ? `<img src="${task.photo}" class="proof-img" alt="Foto Bukti">`: `<div style="font-size:12px; color:#94a3b8; font-style:italic;">Belum ada foto bukti diunggah.</div>`;
+
+                li.innerHTML = `
+                <div class="task-header">
+                <div>
+                <div class="task-title">${task.title}</div>
+                <div class="task-meta">
+                <span class="badge">${task.category}</span>
+                <span class="badge badge-date">📅 Target: ${task.dueDate || 'Tanpa Tanggal'}</span>
+                </div>
+                </div>
+                <button class="btn-delete" onclick="deleteTask(${task.id})">Hapus</button>
+                </div>
+                <div>${statusBadge}</div>
+                ${photoHTML}
+                `;
+
+                listEl.appendChild(li);
+            });
+        }
+    </script>
 </body>
 </html>
-  const functions = require('firebase-functions/v1');
-
-  exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
-      .onCreate((snap, context) => {
-        const original = snap.data().original;
-        console.log('Uppercasing', context.params.documentId, original);
-        const uppercase = original.toUpperCase();
-        return snap.ref.set({uppercase}, {merge: true});
-      });
-  
