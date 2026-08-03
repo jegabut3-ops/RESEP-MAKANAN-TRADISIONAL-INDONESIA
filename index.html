@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Tugas Rumah Pro</title>
+    <title>Tugas Rumah + Bukti Foto/Kamera</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -29,51 +29,23 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 30px 15px;
+            padding: 20px 15px;
         }
 
         .container {
             background-color: var(--card-bg);
-            padding: 25px;
+            padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 600px;
         }
 
-        header {
-            margin-bottom: 20px;
-        }
-
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            background-color: #e2e8f0;
-            border-radius: 20px;
-            height: 12px;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: #10b981;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-align: right;
-            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
         }
 
         /* Form Input */
@@ -84,7 +56,7 @@
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .input-row {
@@ -92,8 +64,8 @@
             gap: 10px;
         }
 
-        input[type="text"], input[type="date"], select {
-            padding: 10px 12px;
+        input[type="text"], select {
+            padding: 10px;
             border: 1px solid var(--border);
             border-radius: 8px;
             outline: none;
@@ -102,9 +74,31 @@
             width: 100%;
         }
 
-        input:focus, select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        .photo-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e0;
+        }
+
+        .photo-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            flex: 1;
         }
 
         .btn-add {
@@ -115,29 +109,34 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            font-size: 15px;
         }
 
-        .btn-add:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Controls (Filter & Cari) */
-        .controls-card {
-            display: flex;
+        /* Area Kamera Live */
+        #cameraArea {
+            display: none;
+            flex-direction: column;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            background: #000;
+            padding: 10px;
+            border-radius: 8px;
         }
 
-        .search-box {
-            flex: 2;
-            min-width: 180px;
+        video {
+            width: 100%;
+            max-height: 250px;
+            border-radius: 6px;
+            background: #222;
         }
 
-        .filter-box {
-            flex: 1;
-            min-width: 130px;
+        #previewImage {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 6px;
+            display: none;
+            object-fit: cover;
+            margin-top: 5px;
         }
 
         /* List Items */
@@ -149,153 +148,166 @@
             background-color: white;
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 12px 15px;
+            padding: 12px;
             margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-main {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
-            border-left: 5px solid #cbd5e0;
-        }
-
-        li.p-Tinggi { border-left-color: #ef4444; }
-        li.p-Sedang { border-left-color: #f59e0b; }
-        li.p-Rendah { border-left-color: #10b981; }
-
-        li.completed {
-            background-color: #f8fafc;
-            opacity: 0.6;
-        }
-
-        li.completed .title {
-            text-decoration: line-through;
         }
 
         .info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
             cursor: pointer;
             flex: 1;
         }
 
         .title {
             font-weight: 600;
-            color: var(--text);
             font-size: 15px;
         }
 
-        .meta {
-            font-size: 12px;
+        li.completed .title {
+            text-decoration: line-through;
             color: var(--text-muted);
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
         }
 
         .badge {
+            font-size: 11px;
             background-color: #e2e8f0;
             padding: 2px 6px;
             border-radius: 4px;
-            font-weight: 500;
+            margin-top: 4px;
+            display: inline-block;
         }
 
-        .actions {
-            display: flex;
-            gap: 5px;
+        .proof-photo {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
 
         .btn-delete {
             background-color: #fee2e2;
             color: #ef4444;
             border: none;
-            padding: 8px 10px;
+            padding: 6px 10px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .btn-delete:hover {
-            background-color: #fca5a5;
-            color: #991b1b;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1>🏠 Management Tugas Rumah</h1>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">0% Selesai</div>
-        </header>
+        <h1>📸 Tugas Rumah + Bukti Foto</h1>
 
-        <!-- Form Tambah -->
         <div class="form-card">
-            <input type="text" id="taskTitle" placeholder="Nama tugas (misal: Beli Tabung Gas)...">
+            <input type="text" id="taskTitle" placeholder="Nama tugas (misal: Menyapu Dapur)...">
             
             <div class="input-row">
                 <select id="taskCategory">
-                    <option value="Umum">📍 Area/Kategori</option>
                     <option value="Dapur">🍳 Dapur</option>
-                    <option value="Kamar">🛏️ Kamar Tidur</option>
+                    <option value="Kamar">🛏️ Kamar</option>
                     <option value="Ruang Tamu">🛋️ Ruang Tamu</option>
-                    <option value="Kamar Mandi">🚿 Kamar Mandi</option>
-                    <option value="Belanja">🛒 Belanja</option>
-                </select>
-
-                <select id="taskPriority">
-                    <option value="Sedang">⚡ Prioritas</option>
-                    <option value="Tinggi">🔴 Tinggi</option>
-                    <option value="Sedang">🟠 Sedang</option>
-                    <option value="Rendah">🟢 Rendah</option>
+                    <option value="Halaman">🌱 Halaman</option>
                 </select>
             </div>
 
-            <div class="input-row">
-                <input type="date" id="taskDueDate">
-                <button class="btn-add" onclick="addTask()">+ Tambah Tugas</button>
+            <div class="photo-input-group">
+                <label style="font-size: 12px; font-weight: 600; color: #475569;">📷 Bukti Pengerjaan (Opsional):</label>
+                <div class="photo-buttons">
+                    <button type="button" class="btn-secondary" onclick="startCamera()">📷 Ambil via Kamera</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Pilih dari Galeri</button>
+                </div>
+
+                <div id="cameraArea">
+                    <video id="webcam" autoplay playsinline></video>
+                    <button type="button" class="btn-secondary" style="background:#10b981;" onclick="takeSnap()">📸 Jepret Foto</button>
+                </div>
+
+                <img id="previewImage" alt="Preview Bukti">
             </div>
+
+            <button class="btn-add" onclick="addTask()">+ Simpan Tugas</button>
         </div>
 
-        <!-- Filter & Search -->
-        <div class="controls-card">
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Cari tugas..." oninput="renderTasks()">
-            <select id="filterStatus" class="filter-box" onchange="renderTasks()">
-                <option value="all">Semua Status</option>
-                <option value="active">Belum Selesai</option>
-                <option value="completed">Selesai</option>
-            </select>
-        </div>
-
-        <!-- List Tugas -->
         <ul id="taskList"></ul>
     </div>
 
     <script>
-        let tasks = JSON.parse(localStorage.getItem('proTasks')) || [];
+        let tasks = JSON.parse(localStorage.getItem('photoTasks')) || [];
+        let currentPhotoBase64 = "";
+        let stream = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderTasks();
-            updateProgress();
-        });
+        document.addEventListener('DOMContentLoaded', renderTasks);
+
+        // Akses Kamera HP / WebCam
+        async function startCamera() {
+            const cameraArea = document.getElementById('cameraArea');
+            const video = document.getElementById('webcam');
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" } // Mengutamakan kamera belakang HP
+                });
+                video.srcObject = stream;
+                cameraArea.style.display = 'flex';
+            } catch (err) {
+                alert("Gagal mengaktifkan kamera. Pastikan memberikan izin akses kamera.");
+            }
+        }
+
+        // Ambil Foto dari Kamera
+        function takeSnap() {
+            const video = document.getElementById('webcam');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7); // Kompresi foto
+            showPreview(currentPhotoBase64);
+
+            // Matikan Kamera
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('cameraArea').style.display = 'none';
+        }
+
+        // Ambil Foto dari File / Galeri
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentPhotoBase64 = e.target.result;
+                    showPreview(currentPhotoBase64);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showPreview(src) {
+            const img = document.getElementById('previewImage');
+            img.src = src;
+            img.style.display = 'block';
+        }
 
         function addTask() {
             const title = document.getElementById('taskTitle').value.trim();
             const category = document.getElementById('taskCategory').value;
-            const priority = document.getElementById('taskPriority').value;
-            const dueDate = document.getElementById('taskDueDate').value;
 
             if (!title) {
                 alert('Nama tugas tidak boleh kosong!');
@@ -306,95 +318,63 @@
                 id: Date.now(),
                 title: title,
                 category: category,
-                priority: priority,
-                dueDate: dueDate,
-                completed: false
+                photo: currentPhotoBase64,
+                completed: false,
+                date: new Date().toLocaleString('id-ID')
             };
 
             tasks.push(newTask);
-            saveData();
-            
+            localStorage.setItem('photoTasks', JSON.stringify(tasks));
+
             // Reset Form
             document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDueDate').value = '';
-            document.getElementById('taskCategory').value = 'Umum';
-            document.getElementById('taskPriority').value = 'Sedang';
+            document.getElementById('previewImage').style.display = 'none';
+            currentPhotoBase64 = "";
 
             renderTasks();
         }
 
         function toggleTask(id) {
-            tasks = tasks.map(task => {
-                if (task.id === id) task.completed = !task.completed;
-                return task;
+            tasks = tasks.map(t => {
+                if (t.id === id) t.completed = !t.completed;
+                return t;
             });
-            saveData();
+            localStorage.setItem('photoTasks', JSON.stringify(tasks));
             renderTasks();
         }
 
         function deleteTask(id) {
-            tasks = tasks.filter(task => task.id !== id);
-            saveData();
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem('photoTasks', JSON.stringify(tasks));
             renderTasks();
-        }
-
-        function saveData() {
-            localStorage.setItem('proTasks', JSON.stringify(tasks));
-            updateProgress();
-        }
-
-        function updateProgress() {
-            if (tasks.length === 0) {
-                document.getElementById('progressBar').style.width = '0%';
-                document.getElementById('progressText').innerText = '0% Selesai';
-                return;
-            }
-
-            const completedTasks = tasks.filter(t => t.completed).length;
-            const percentage = Math.round((completedTasks / tasks.length) * 100);
-
-            document.getElementById('progressBar').style.width = `${percentage}%`;
-            document.getElementById('progressText').innerText = `${percentage}% Selesai (${completedTasks}/${tasks.length})`;
         }
 
         function renderTasks() {
             const listEl = document.getElementById('taskList');
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            const filterStatus = document.getElementById('filterStatus').value;
-
             listEl.innerHTML = '';
 
-            const filteredTasks = tasks.filter(task => {
-                const matchesSearch = task.title.toLowerCase().includes(searchQuery);
-                const matchesStatus = 
-                    filterStatus === 'all' ? true :
-                    filterStatus === 'completed' ? task.completed : !task.completed;
-
-                return matchesSearch && matchesStatus;
-            });
-
-            if (filteredTasks.length === 0) {
-                listEl.innerHTML = `<div class="empty-state">Tidak ada tugas ditemukan.</div>`;
+            if (tasks.length === 0) {
+                listEl.innerHTML = '<li style="text-align:center; color:#94a3b8;">Belum ada tugas tercatat.</li>';
                 return;
             }
 
-            filteredTasks.forEach(task => {
+            tasks.forEach(task => {
                 const li = document.createElement('li');
-                li.className = `p-${task.priority} ${task.completed ? 'completed' : ''}`;
+                if (task.completed) li.classList.add('completed');
 
-                const dateFormatted = task.dueDate ? new Date(task.dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : 'Tanpa Tenggat';
+                let photoHTML = task.photo 
+                    ? `<img src="${task.photo}" class="proof-photo" alt="Bukti Foto">` 
+                    : '<span style="font-size:12px; color:#94a3b8; italic;">Tidak ada foto bukti</span>';
 
                 li.innerHTML = `
-                    <div class="info" onclick="toggleTask(${task.id})">
-                        <span class="title">${task.title}</span>
-                        <div class="meta">
-                            <span class="badge">${task.category}</span>
-                            <span>📅 ${dateFormatted}</span>
+                    <div class="task-main">
+                        <div class="info" onclick="toggleTask(${task.id})">
+                            <div class="title">${task.completed ? '✅ ' : '⏳ '} ${task.title}</div>
+                            <span class="badge">${task.category} • ${task.date}</span>
                         </div>
-                    </div>
-                    <div class="actions">
                         <button class="btn-delete" onclick="deleteTask(${task.id})">Hapus</button>
                     </div>
+                    ${photoHTML}
                 `;
 
                 listEl.appendChild(li);
